@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TOOL GAME V1 - TUANX3000</title>
+    <style>
+        /* --- GIAO DIỆN V1 DARK MODE CHUẨN --- */
+        body { background-color: #050505; color: #00ff41; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; overflow: hidden; }
+        * { box-sizing: border-box; user-select: none; }
+        
+        .container { position: relative; z-index: 10; max-width: 450px; margin: 0 auto; padding: 20px; height: 100vh; display: flex; flex-direction: column; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); }
+        
+        .header { text-align: center; margin-bottom: 20px; }
+        .google-badge { background: #fff; color: #444; font-weight: bold; font-size: 10px; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
+        h1 { margin: 0; color: #00ff41; text-shadow: 0 0 15px rgba(0, 255, 65, 0.5); font-size: 28px; text-transform: uppercase; }
+        
+        .notif-bar { background: rgba(255, 0, 170, 0.1); border: 1px solid #ff00aa; color: #ff00aa; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; font-weight: bold; text-align: center; text-decoration: none; display: block; animation: pulse 2s infinite; }
+        
+        /* --- TABS --- */
+        .auth-tabs { display: flex; border-bottom: 1px solid #333; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 12px; background: transparent; border: none; color: #666; font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; transition: 0.3s; }
+        .tab-btn.active { color: #00ff41; border-bottom: 2px solid #00ff41; }
+        
+        /* --- FORMS --- */
+        .form-group { display: none; animation: slideUp 0.4s ease forwards; }
+        .form-group.active { display: block; }
+        
+        input { width: 100%; padding: 14px; margin: 8px 0; background: #111; border: 1px solid #333; color: #fff; border-radius: 8px; outline: none; text-align: center; font-size: 14px; transition: 0.3s; }
+        input:focus { border-color: #00ff41; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2); }
+        
+        .btn-submit { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; transition: 0.2s; }
+        .btn-login { background: linear-gradient(90deg, #008000, #00ff41); color: #000; }
+        .btn-login:active { transform: scale(0.98); }
+        .btn-reg { background: linear-gradient(90deg, #333, #555); color: #fff; }
+        
+        /* --- GAME GRID 6 Ô (3 CỘT) --- */
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 5px; padding-bottom: 30px; }
+        .game-card { background: #111; border: 1px solid #333; border-radius: 12px; padding: 8px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .game-card:hover { border-color: #00ff41; background: rgba(0, 255, 65, 0.05); }
+        .game-card:active .game-thumb { border-color: #00ff41; box-shadow: 0 0 15px rgba(0, 255, 65, 0.5); transform: scale(0.95); }
+        
+        /* --- KHUNG ẢNH --- */
+        .game-thumb { width: 100%; height: 75px; background: #000; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid #222; overflow: hidden; transition: 0.3s; }
+        .game-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .game-card span { font-weight: bold; font-size: 10px; color: #00ff41; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        #msg-status { margin-top: 15px; font-size: 13px; text-align: center; min-height: 20px; font-weight: bold; }
+        .hidden { display: none; }
+
+        /* NÚT TELEGRAM TRÔI BÊN PHẢI */
+        .tele-float { position: fixed; bottom: 20px; right: 20px; z-index: 99999; background: #0088cc; color: white; padding: 12px 20px; border-radius: 50px; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 20px rgba(0, 136, 204, 0.5); animation: float 3s ease-in-out infinite; }
+        
+        /* --- KEYFRAMES --- */
+        @keyframes slideUp { from { transform: translateY(15px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 170, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 0, 170, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 170, 0); } }
+        @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <span class="google-badge">Powered by Tuanx3000</span>
+            <h1 id="main-title">TOOL GAME V1</h1>
+            <p style="font-size: 10px; color: #666; margin-top: 5px;">DEEP LEARNING CORE PROCESSING</p>
+        </div>
+
+        <a class="notif-bar" href="https://t.me/tuanx3000" target="_blank">
+            📢 MUA KEY VIP LIÊN HỆ TELEGRAM: @TUANX3000 
+        </a>
+
+        <div id="auth-screen">
+            <div class="auth-tabs">
+                <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">ĐĂNG NHẬP</button>
+                <button class="tab-btn" id="tab-reg" onclick="switchTab('register')">ĐĂNG KÝ</button>
+            </div>
+            
+            <div id="login-form" class="form-group active">
+                <input type="text" id="login-user" placeholder="Tên tài khoản">
+                <input type="password" id="login-pass" placeholder="Mật khẩu">
+                <button class="btn-submit btn-login" onclick="handleAuth('login')">VÀO HỆ THỐNG</button>
+            </div>
+            
+            <div id="reg-form" class="form-group">
+                <input type="text" id="reg-user" placeholder="Tên tài khoản mới">
+                <input type="password" id="reg-pass" placeholder="Mật khẩu mới">
+                <input type="text" id="reg-sdt" placeholder="Số điện thoại đăng ký">
+                <button class="btn-submit btn-reg" onclick="handleAuth('register')">ĐĂNG KÝ NGAY</button>
+            </div>
+        </div>
+
+        <div id="game-screen" class="hidden">
+            <p style="text-align: center; font-size: 11px; color: #888; margin-bottom: 15px; letter-spacing: 1px;">CHỌN CỔNG GAME ĐỂ KÍCH HOẠT</p>
+            <div class="game-grid">
+                
+                <div class="game-card" onclick="openKey('SUNWIN', 'toolsunwin.html')">
+                    <div class="game-thumb"><img src="https://i.ibb.co/1DTdSJV/IMG-5590.png" alt="Sunwin"></div>
+                    <span>SUNWIN</span>
+                </div>
+
+                <div class="game-card" onclick="openKey('LC79', 'toollc79.html')">
+                    <div class="game-thumb"><img src="https://i.ibb.co/r2Vq2B8k/IMG-5592.jpg" alt="LC79"></div>
+                    <span>LC79</span>
+                </div>
+
+                <div class="game-card" onclick="openKey('MAX789', 'toolmax789.html')">
+                    <div class="game-thumb"><img src="https://i.ibb.co/n8573PZD/IMG-5593.jpg" alt="MAX789"></div>
+                    <span>MAX789</span>
+                </div>
+
+                <div class="game-card" onclick="openKey('789CLUB', 'tool789.html')">
+                    <div class="game-thumb"><img src="https://i.ibb.co/1DTdSJV/IMG-5590.png" style="filter: hue-rotate(90deg);" alt="789Club"></div>
+                    <span>789CLUB</span>
+                </div>
+
+                <div class="game-card" onclick="openKey('B52', 'toolb52.html')">
+                    <div class="game-thumb"><img src="https://i.ibb.co/r2Vq2B8k/IMG-5592.jpg" style="filter: grayscale(1);" alt="B52"></div>
+                    <span>B52</span>
+                </div>
+
+                <div class="game-card" onclick="openKey('GO88', 'toolgo88.html')">
+                    <div class="game-thumb"><img src="https://i.ibb.co/n8573PZD/IMG-5593.jpg" style="filter: brightness(0.6);" alt="GO88"></div>
+                    <span>GO88</span>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="key-screen" class="hidden">
+            <h3 id="target-game" style="text-align:center; color:#00ff41; margin-bottom: 20px;"></h3>
+            <input type="text" id="key-input" placeholder="NHẬP MÃ KEY VIP">
+            <button class="btn-submit btn-login" onclick="verifyFinal()">KÍCH HOẠT TOOL</button>
+            <button class="btn-submit btn-reg" onclick="backToGame()" style="font-size:12px; padding:12px; background: #333; color: #aaa;">QUAY LẠI CHỌN GAME</button>
+        </div>
+
+        <div id="msg-status"></div>
+    </div>
+
+    <a href="https://t.me/tuanx3000" class="tele-float" target="_blank">
+        <span>✈️</span> ADMIN TUANX3000
+    </a>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6xGHV6OIVBDxfA3-lTtccKKe7Owk2NOrL_v0WPInTzqQBQLufJq_DDkqIRXQGgeT7ew/exec";
+        let serverData = {}; 
+        let targetPage = "";
+
+        // Chuyển đổi Tab Đăng Nhập / Đăng Ký
+        function switchTab(tab) {
+            document.getElementById('login-form').classList.toggle('active', tab === 'login');
+            document.getElementById('reg-form').classList.toggle('active', tab === 'register');
+            document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+            document.getElementById('tab-reg').classList.toggle('active', tab === 'register');
+            document.getElementById('msg-status').innerText = "";
+        }
+
+        // Xử lý gửi dữ liệu lên Google Sheets
+        async function handleAuth(type) {
+            const msg = document.getElementById('msg-status');
+            let payload = { action: type };
+            
+            if(type === 'login') {
+                payload.username = document.getElementById('login-user').value.trim();
+                payload.password = document.getElementById('login-pass').value.trim();
+            } else {
+                payload.username = document.getElementById('reg-user').value.trim();
+                payload.password = document.getElementById('reg-pass').value.trim();
+                payload.sdt = document.getElementById('reg-sdt').value.trim();
+            }
+
+            if(!payload.username || !payload.password || (type === 'register' && !payload.sdt)) {
+                msg.style.color = "#ff4d4d";
+                return msg.innerText = "❌ Vui lòng điền đủ thông tin!";
+            }
+
+            msg.style.color = "#ffbc00";
+            msg.innerText = "⏳ Đang kết nối hệ thống...";
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+                const data = await res.json();
+
+                if(data.success) {
+                    if(type === 'login') {
+                        serverData = data; // Lưu lại Key và Ngày hết hạn
+                        document.getElementById('auth-screen').classList.add('hidden');
+                        document.getElementById('game-screen').classList.remove('hidden');
+                        document.getElementById('main-title').innerText = "DANH MỤC GAME";
+                        msg.innerText = "";
+                    } else {
+                        msg.style.color = "#00ff41";
+                        msg.innerText = "✅ Đăng ký thành công! Hãy đăng nhập.";
+                        switchTab('login');
+                    }
+                } else {
+                    msg.style.color = "#ff4d4d";
+                    msg.innerText = "⚠️ " + data.message;
+                }
+            } catch (e) { 
+                msg.style.color = "#ff4d4d"; 
+                msg.innerText = "🚫 Lỗi kết nối đến máy chủ!"; 
+            }
+        }
+
+        // Mở màn hình nhập Key
+        function openKey(name, url) {
+            targetPage = url;
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('key-screen').classList.remove('hidden');
+            document.getElementById('target-game').innerText = "CỔNG GAME: " + name;
+            document.getElementById('main-title').innerText = "XÁC MINH KEY";
+            document.getElementById('msg-status').innerText = "";
+        }
+
+        // Nút quay lại chọn Game
+        function backToGame() {
+            document.getElementById('key-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('main-title').innerText = "DANH MỤC GAME";
+            document.getElementById('msg-status').innerText = "";
+            document.getElementById('key-input').value = "";
+        }
+
+        // Chốt hạ kiểm tra Key
+        function verifyFinal() {
+            const inputKey = document.getElementById('key-input').value.trim();
+            const msg = document.getElementById('msg-status');
+
+            if(!inputKey) {
+                msg.style.color = "#ff4d4d";
+                msg.innerText = "❌ Vui lòng nhập Key VIP!";
+                return;
+            }
+
+            if(inputKey !== serverData.key || inputKey === "keychoduyet") {
+                msg.style.color = "#ff4d4d";
+                msg.innerText = "❌ KEY KHÔNG ĐÚNG HOẶC CHƯA ĐƯỢC DUYỆT!";
+                return;
+            }
+
+            if(serverData.expiry <= serverData.today) {
+                msg.style.color = "#ff4d4d";
+                msg.innerText = "❌ KEY ĐÃ HẾT HẠN! LIÊN HỆ ADMIN.";
+                return;
+            }
+
+            msg.style.color = "#00ff41";
+            msg.innerText = "🚀 XÁC MINH THÀNH CÔNG! ĐANG VÀO TOOL...";
+            setTimeout(() => { 
+                window.location.href = targetPage; 
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
