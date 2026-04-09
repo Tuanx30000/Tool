@@ -96,7 +96,9 @@
         <div id="game-screen">
             <p style="text-align:center; font-size:11px; color:#888; margin-bottom:15px;">CHỌN GAME ĐỂ KÍCH HOẠT</p>
             <div class="game-grid">
-                <div class="game-card" onclick="openKey('SUNWIN', 'toolsunwin.html')"><div class="game-thumb"><img src="https://i.ibb.co/1DTdSJV/IMG-5590.png" alt="Sunwin"></div><span>SUNWIN</span></div>
+                <div class="game-card" onclick="openKey('SUNWIN', 'toolsunwin.html')">
+                    <div class="game-thumb"><img src="https://i.ibb.co/1DTdSJV/IMG-5590.png" alt="Sunwin"></div><span>SUNWIN</span>
+                </div>
                 <div class="game-card" onclick="openKey('LC79', 'toollc79.html')"><div class="game-thumb"><img src="https://i.ibb.co/r2Vq2B8k/IMG-5592.jpg" alt="LC79"></div><span>LC79</span></div>
                 <div class="game-card" onclick="openKey('MAX789', 'toolmax789.html')"><div class="game-thumb"><img src="https://i.ibb.co/n8573PZD/IMG-5593.jpg" alt="MAX789"></div><span>MAX789</span></div>
                 <div class="game-card" onclick="openKey('XOCDIA88', 'toolxocdia88.html')"><div class="game-thumb"><img src="https://i.ibb.co/JWVpBF4j/IMG-5616.png" alt="xocdia88"></div><span>XOCDIA88</span></div>
@@ -209,7 +211,8 @@
 
             msg.style.color = "#00ff41"; 
             msg.innerText = "🚀 ĐANG KÍCH HOẠT TOOL...";
-            setTimeout(() => { window.location.href = targetPage; }, 800);
+            // Đã fix lỗi chuyển trang không mang theo username
+            setTimeout(() => { window.location.href = `${targetPage}?u=${encodeURIComponent(username)}`; }, 800);
         }
 
         // --- MÀN HÌNH NẠP TIỀN ---

@@ -2,295 +2,351 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>TUANX3000 MASTER • ANH TUẤN MMO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>MAX789 MASTER TOOL • ANH TUẤN MMO</title>
 <style>
-html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; font-family:-apple-system, system-ui, sans-serif; }
-#game-frame { position:absolute; inset:0; width:100%; height:100%; border:0; z-index:1; }
+html, body { 
+  margin:0; padding:0; width:100%; height:100%; overflow:hidden; 
+  background:#000; font-family:-apple-system, system-ui, sans-serif; 
+}
+#game-frame { 
+  position:absolute; inset:0; width:100%; height:100%; border:0; z-index:1; 
+}
 
+/* Nút menu */
 #m-btn {
   position:fixed; top:15px; right:15px; width:48px; height:48px;
   background:rgba(0,255,255,0.2); border:1.5px solid #00eaff;
   border-radius:14px; display:flex; justify-content:center; align-items:center;
-  z-index:1000005; cursor:pointer; color:#00eaff; font-size:24px; backdrop-filter:blur(15px);
+  z-index:1000005; cursor:pointer; color:#00eaff; font-size:24px; 
+  backdrop-filter:blur(15px);
 }
 #m-panel {
-  position:fixed; top:75px; right:15px; width:220px;
-  background:rgba(10,10,15,0.96); border:1px solid #00eaff;
+  position:fixed; top:75px; right:15px; width:210px;
+  background:rgba(10,10,15,0.95); border:1px solid #00eaff;
   border-radius:18px; display:none; z-index:1000006; overflow:hidden;
-  box-shadow: 0 15px 50px rgba(0,0,0,0.85);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.8);
 }
-.m-opt { color:#fff; padding:15px; font-size:13.5px; font-weight:700; cursor:pointer; border-bottom:1px solid #222; transition: 0.3s; }
-.m-opt:active { background:rgba(0,234,255,0.25); }
-.m-opt.active { color:#00eaff; background:rgba(0,234,255,0.15); }
+.m-opt { 
+  color:#fff; padding:15px; font-size:13px; font-weight:700; 
+  cursor:pointer; border-bottom:1px solid #222; transition: 0.3s; 
+}
+.m-opt:active { background:rgba(0,234,255,0.2); }
+.m-opt.active { color:#00eaff; background:rgba(0,234,255,0.1); }
 
+/* Nút quay lại */
+#back-btn {
+  position:fixed; top:15px; left:15px; width:48px; height:48px;
+  background:rgba(0,234,255,0.18); border:1.5px solid #00eaff;
+  border-radius:14px; display:flex; justify-content:center; align-items:center;
+  z-index:1000005; cursor:pointer; color:#00eaff; font-size:22px; 
+  backdrop-filter:blur(12px); box-shadow:0 4px 15px rgba(0,234,255,0.25);
+}
+
+/* Tool Root */
 #tool-root {
   position:fixed; left:50%; top:20%; transform:translate(-50%, -50%) scale(1);
-  width:320px; height:138px; border-radius:69px;
+  width:320px; height:158px; border-radius:68px;
   display:flex; align-items:center; justify-content:space-between;
-  padding:0 24px; z-index:1000000; touch-action:none;
-  background:rgba(15,15,25,0.88); backdrop-filter:blur(28px);
+  padding:0 22px; z-index:1000000; touch-action:none;
+  background:rgba(15,15,22,0.88); backdrop-filter:blur(25px);
   border:1.8px solid rgba(0,234,255,0.45);
-  box-shadow:0 25px 65px rgba(0,0,0,0.85); user-select:none;
+  box-shadow:0 25px 60px rgba(0,0,0,0.85); 
+  user-select:none;
 }
-.led { width:60px; height:60px; border-radius:50%; transition:0.45s; }
-.l-t { background:#081808; border:2.5px solid #00ff8811; }
-.l-x { background:#180808; border:2.5px solid #ff335511; }
-.on.l-t { background:#00ff88; box-shadow:0 0 55px #00ff88, inset 0 0 18px #fff; transform:scale(1.08); }
-.on.l-x { background:#ff3355; box-shadow:0 0 55px #ff3355, inset 0 0 18px #fff; transform:scale(1.08); }
+.led { width:58px; height:58px; border-radius:50%; transition:0.4s; }
+.l-t { background:#081808; border:2px solid #00ff8811; }
+.l-x { background:#180808; border:2px solid #ff335511; }
+.on.l-t { background:#00ff88; box-shadow:0 0 50px #00ff88, inset 0 0 15px #fff; transform:scale(1.05); }
+.on.l-x { background:#ff3355; box-shadow:0 0 50px #ff3355, inset 0 0 15px #fff; transform:scale(1.05); }
 
 .core { flex:1; text-align:center; padding:0 12px; }
-#label { font-size:10.5px; color:#ffd700; font-weight:900; letter-spacing:1.8px; margin-bottom:5px; text-transform:uppercase; }
-#sid { font-size:15px; font-weight:900; color:#00eaff; font-family:monospace; letter-spacing:1px; }
-#res { font-size:29px; font-weight:900; color:#fff; text-shadow:0 0 18px rgba(255,255,255,0.5); margin:3px 0; }
-#stt { font-size:9.5px; font-weight:800; text-transform:uppercase; }
-#ping-box { font-size:8.2px; color:#666; margin-top:4px; font-weight:bold; }
+#label { 
+  font-size:10px; color:#ffd700; font-weight:900; 
+  letter-spacing:1.5px; margin-bottom:4px; text-transform:uppercase; 
+}
+#sid { 
+  font-size:14px; font-weight:900; color:#00eaff; 
+  font-family:monospace; letter-spacing:0.5px; 
+}
+#res { 
+  font-size:34px; font-weight:900; color:#fff; 
+  text-shadow:0 0 15px rgba(255,255,255,0.5); margin:4px 0; 
+}
+#stt { 
+  font-size:9.5px; font-weight:800; text-transform:uppercase; 
+  letter-spacing:0.6px; 
+}
+#extra-info { 
+  font-size:8.5px; color:#aaa; margin-top:3px; line-height:1.3; 
+}
+#ping-box { 
+  font-size:8px; color:#666; margin-top:5px; font-weight:bold; 
+}
 </style>
 </head>
 <body>
 
 <iframe id="game-frame" src="https://play.max789.vin/"></iframe>
+
 <div id="m-btn" onclick="toggleMenu()">☰</div>
-<!-- NÚT QUAY LẠI INDEX - GÓC TRÁI TRÊN -->
-<div id="back-btn" onclick="goBackToIndex()" 
-     style="position:fixed; top:15px; left:15px; width:48px; height:48px;
-            background:rgba(0,234,255,0.18); border:1.5px solid #00eaff;
-            border-radius:14px; display:flex; justify-content:center; align-items:center;
-            z-index:1000005; cursor:pointer; color:#00eaff; font-size:22px; 
-            backdrop-filter:blur(12px); box-shadow:0 4px 15px rgba(0,234,255,0.25);">
-    ←
-</div>
+<div id="back-btn" onclick="goBackToIndex()">←</div>
 
 <div id="m-panel">
-  <div class="m-opt" id="o-md5" onclick="setMode('md5')">TX MD5 TUANX3000</div>
-  <div class="m-opt" id="o-nohu" onclick="setMode('nohu')">TX NỔ HŨ TUANX3000</div>
-  <div class="m-opt" onclick="resize(1.08)">PHÓNG TO (+)</div>
-  <div class="m-opt" onclick="resize(0.92)">THU NHỎ (-)</div>
+  <div class="m-opt" id="o-md5" onclick="setMode('md5')">TX MD5 - LIVE</div>
+  <div class="m-opt" id="o-nohu" onclick="setMode('nohu')">TX NỔ HŨ - LIVE</div>
+  <div class="m-opt" onclick="resize(1.1)">PHÓNG TO (+)</div>
+  <div class="m-opt" onclick="resize(0.9)">THU NHỎ (-)</div>
   <div class="m-opt" style="color:#ffcc00" onclick="location.reload()">LÀM MỚI TOOL</div>
 </div>
 
 <div id="tool-root">
   <div id="led-t" class="led l-t"></div>
   <div class="core">
-    <div id="label">TUANX3000 AI v2.0</div>
-    <div id="sid">#LOADING...</div>
-    <div id="res">WAITING</div>
-    <div id="stt">ĐANG PHÂN TÍCH</div>
-    <div id="ping-box">Ping: --ms | Auto +1 Phiên</div>
+    <div id="label">MAX789 MASTER AI</div>
+    <div id="sid">#CONNECTING</div>
+    <div id="res">...</div>
+    <div id="stt">ĐANG KHỞI TẠO AI</div>
+    <div id="extra-info">Streak: -- | Entropy: --</div>
+    <div id="ping-box">Ping: --ms | TuanX5000 v5.1</div>
   </div>
   <div id="led-x" class="led l-x"></div>
 </div>
 
 <script>
-// ================== CẤU HÌNH ==================
-const PRIVATE_API = "https://proxymax789.lot896613.workers.dev/?mode=";
+// ================== BẢO MẬT USER ==================
+const urlParams = new URLSearchParams(window.location.search);
+const currentUser = urlParams.get('u') || localStorage.getItem('tuanx3000_user');
 
-let mode = localStorage.getItem('tuanx3000_mode') || 'nohu'; 
+if (!currentUser || currentUser === "null") {
+    window.location.replace("index.html");
+}
+
+function goBackToIndex() {
+    window.location.href = `main.html?u=${encodeURIComponent(currentUser)}`;
+}
+
+// ================== CẤU HÌNH ==================
+const API_BASE = "https://proxymax789.lot896613.workers.dev/?mode=";
+let currentMode = localStorage.getItem('tuanx3000_mode') || 'nohu'; 
 let currentScale = parseFloat(localStorage.getItem('tuanx3000_scale')) || 1.0;
 let abortCtrl = null;
 
-// ================== REFRESH + AUTO +1 PHIÊN ==================
-async function refresh() {
-  if (abortCtrl) abortCtrl.abort();
-  abortCtrl = new AbortController();
-  
-  const start = Date.now();
-  try {
-    const res = await fetch(PRIVATE_API + mode, { signal: abortCtrl.signal });
-    const data = await res.json();
+// ================== TUANX5000 v5.1 - THUẬT TOÁN CAO CẤP ==================
+function runMasterAI(list) {
+  if (!list || list.length < 20) {
+    return { result: "TÀI", confidence: 51, streak: "0T", entropy: "0.50" };
+  }
+
+  // Parse kết quả linh hoạt cho MAX789
+  const historyArr = list.slice(0, 400).map(item => {
+    let val = item.resultTruyenThong || item.result || item.BetSide || item.betSide ||
+              item.diceSum || item.SessionResult || item.resultTX || "";
     
-    const list = data.Data || [];
-    if (list.length > 0) {
-      const latest = list[0];
-      let currentId = BigInt(latest.SessionId || 0);
-      let nextId = (currentId + 1n).toString();   // AUTO +1 PHIÊN
-
-      const ai = runAI(list);
-      const ping = Date.now() - start;
-      
-      updateUI(nextId, ai.r, ai.c, ping);
-    }
-  } catch (e) {
-    if (e.name !== 'AbortError') console.error("Lỗi:", e);
-  }
-}
-
-// ================== THUẬT TOÁN AI NÂNG CAO TUANX3000 v3.0 - MAX ACCURACY ==================
-function runAI(list) {
-  if (!list || list.length < 12) {
-    return { r: "TÀI", c: 53 };
-  }
-
-  // Xây dựng lịch sử T/X (tương thích tất cả proxy)
-  const history = list.slice(0, 250).map(item => {
-    let val = item.resultTruyenThong || item.result || item.BetSide || item.betSide || 
-              item.diceSum || item.SessionResult || "";
     if (typeof val === 'number') {
-      return (val === 1 || val >= 11) ? "T" : "X";
+      return (val >= 11 || val === 1) ? "T" : "X";
     }
     const s = String(val).toUpperCase().trim();
-    return (s.includes("TÀI") || s.includes("TAI") || s === "1" || s.includes("BIG")) ? "T" : "X";
-  }).join("");
+    return (s.includes("TÀI") || s.includes("TAI") || s === "T" || 
+            s.includes("BIG") || s === "1") ? "T" : "X";
+  });
 
+  const history = historyArr.join("");
   const len = history.length;
-  if (len < 12) return { r: "TÀI", c: 53 };
+  if (len < 20) return { result: "TÀI", confidence: 51, streak: "0T", entropy: "0.50" };
 
   let tScore = 0, xScore = 0;
-  const w3 = history.substring(0, 3);
-  const w4 = history.substring(0, 4);
-  const w5 = history.substring(0, 5);
 
-  // 1. Multi-pattern với trọng số recent mạnh
-  for (let i = 1; i < len - 6; i++) {
-    const recency = Math.pow(0.96, i);
+  // 1. Multi-scale Pattern + Recency Weight
+  const scales = [
+    { size: 30,  weight: 1.00, decay: 0.96 },
+    { size: 80,  weight: 0.78, decay: 0.97 },
+    { size: 150, weight: 0.55, decay: 0.98 },
+    { size: 300, weight: 0.32, decay: 0.985 }
+  ];
 
-    if (history.substring(i, i + 3) === w3) {
-      (history[i - 1] === "T") ? tScore += recency : xScore += recency;
-    }
-    if (history.substring(i, i + 4) === w4) {
-      (history[i - 1] === "T") ? tScore += recency * 1.45 : xScore += recency * 1.45;
-    }
-    if (history.substring(i, i + 5) === w5) {
-      (history[i - 1] === "T") ? tScore += recency * 1.8 : xScore += recency * 1.8;
-    }
-  }
+  scales.forEach(({size, weight, decay}) => {
+    const w = Math.min(size, len);
+    if (w < 12) return;
+    const recent = history.substring(0, w);
+    const baseFactor = weight;
 
-  // 2. Transition Matrix & Streak analysis
-  let tAfterT = 0, xAfterT = 0, tAfterX = 0, xAfterX = 0;
-  let streakT = 0, streakX = 0, maxStreak = 1, currentStreakChar = history[0];
+    for (let i = 1; i < w - 8; i++) {
+      const rf = baseFactor * Math.pow(decay, i * 0.85);
+
+      if (recent.substring(i, i+3) === recent.substring(0,3)) {
+        (recent[i-1] === "T") ? tScore += rf : xScore += rf * 1.08;
+      }
+      if (recent.substring(i, i+4) === recent.substring(0,4)) {
+        (recent[i-1] === "T") ? tScore += rf * 1.55 : xScore += rf * 1.65;
+      }
+      if (recent.substring(i, i+5) === recent.substring(0,5)) {
+        (recent[i-1] === "T") ? tScore += rf * 1.95 : xScore += rf * 2.10;
+      }
+    }
+  });
+
+  // 2. Markov Chain & Streak
+  let tt = 0, tx = 0, xt = 0, xx = 0;
+  let streakT = 0, streakX = 0, maxStreak = 1;
+  let currentStreakChar = history[0];
 
   for (let i = 1; i < len; i++) {
     if (history[i] === "T") {
-      if (history[i - 1] === "T") { 
-        tAfterT++; 
-        streakT++; 
-        streakX = 0; 
-      } else { 
-        tAfterX++; 
-        streakT = 1; 
-        streakX = 0; 
-      }
+      if (history[i-1] === "T") { tt++; streakT++; streakX = 0; }
+      else { xt++; streakT = 1; streakX = 0; }
+      if (streakT > maxStreak) { maxStreak = streakT; currentStreakChar = "T"; }
     } else {
-      if (history[i - 1] === "X") { 
-        xAfterX++; 
-        streakX++; 
-        streakT = 0; 
-      } else { 
-        xAfterT++; 
-        streakX = 1; 
-        streakT = 0; 
-      }
-    }
-
-    if (Math.max(streakT, streakX) > maxStreak) {
-      maxStreak = Math.max(streakT, streakX);
-      currentStreakChar = history[i];
+      if (history[i-1] === "X") { xx++; streakX++; streakT = 0; }
+      else { tx++; streakX = 1; streakT = 0; }
+      if (streakX > maxStreak) { maxStreak = streakX; currentStreakChar = "X"; }
     }
   }
 
-  // Momentum từ transition
-  const pRepeatT = tAfterT / (tAfterT + xAfterT + 0.001);
-  const pRepeatX = xAfterX / (xAfterX + tAfterX + 0.001);
+  const pTafterT = tt / (tt + tx + 0.001);
+  const overallPT = (tt + xt) / (len - 1 + 0.001);
 
-  // Quyết định kết quả
+  // 3. Entropy
+  let changes = 0;
+  for (let i = 1; i < len; i++) {
+    if (history[i] !== history[i-1]) changes++;
+  }
+  const entropy = changes / (len - 1);
+
+  // 4. Decision
   let final = (tScore > xScore) ? "TÀI" : "XỈU";
 
-  if (maxStreak >= 6) {
+  if (maxStreak >= 7) {
     final = currentStreakChar === "T" ? "TÀI" : "XỈU";
-  } else if (maxStreak >= 4) {
-    if ((currentStreakChar === "T" && pRepeatT > 0.62) || 
-        (currentStreakChar === "X" && pRepeatX > 0.62)) {
+  } else if (maxStreak >= 5) {
+    if ((currentStreakChar === "T" && pTafterT > 0.60) || 
+        (currentStreakChar === "X" && (1 - overallPT) > 0.60)) {
       final = currentStreakChar === "T" ? "TÀI" : "XỈU";
     }
-  } else if (pRepeatT > 0.68 && pRepeatX < 0.55) {
-    final = "TÀI";
-  } else if (pRepeatX > 0.68 && pRepeatT < 0.55) {
-    final = "XỈU";
   }
 
-  // Tính phần trăm tin cậy
+  if (pTafterT > 0.68 && overallPT > 0.52) final = "TÀI";
+  if ((1 - overallPT) > 0.68) final = "XỈU";
+
+  if (entropy > 0.47 && entropy < 0.54 && Math.abs(tScore - xScore) < 5) {
+    final = Math.random() > 0.48 ? "TÀI" : "XỈU";
+  }
+
+  // 5. Confidence
   let diff = Math.abs(tScore - xScore);
-  let base = 54 + Math.floor(diff * 8.2);
+  let conf = 52 + Math.floor(diff * 6.8);
 
-  if (maxStreak >= 7) base += 26;
-  else if (maxStreak >= 5) base += 19;
-  else if (maxStreak >= 4) base += 11;
+  if (maxStreak >= 6) conf += 19;
+  else if (maxStreak >= 5) conf += 13;
+  else if (maxStreak >= 4) conf += 7;
 
-  if (Math.max(pRepeatT, pRepeatX) > 0.70) base += 12;
-  else if (Math.max(pRepeatT, pRepeatX) > 0.63) base += 7;
+  if (Math.max(pTafterT, 1 - overallPT) > 0.67) conf += 12;
 
-  // Phạt khi mơ hồ
-  if (diff < 2.5 && len > 80) base = Math.max(53, base - 18);
-  if (maxStreak === 1 && len > 60) base = Math.max(53, base - 9);
+  if (entropy > 0.51) conf = Math.max(52, conf - 13);
+  if (len > 150 && diff < 6) conf = Math.max(52, conf - 17);
 
-  let percent = Math.max(53, Math.min(96, Math.round(base)));
+  let percent = Math.max(52, Math.min(92, Math.round(conf)));
 
-  if (percent > 78 && final === "TÀI" && pRepeatT < 0.48) percent -= 8;
-  if (percent > 78 && final === "XỈU" && pRepeatX < 0.48) percent -= 8;
+  if (percent > 82) {
+    if (final === "TÀI" && pTafterT < 0.53) percent -= 10;
+    if (final === "XỈU" && overallPT > 0.54) percent -= 10;
+  }
 
-  return { r: final, c: percent };
+  return { 
+    result: final, 
+    confidence: percent,
+    streak: maxStreak + currentStreakChar,
+    entropy: entropy.toFixed(2)
+  };
 }
 
-// ================== UPDATE UI ==================
-function updateUI(nextId, r, c, ping) {
-  document.getElementById("sid").innerText = `#${nextId}`;
-  document.getElementById("res").innerText = r;
-  document.getElementById("ping-box").innerText = `Ping: ${ping}ms | TUANX3000`;
+// ================== REFRESH DATA ==================
+async function refreshData() {
+  if (abortCtrl) abortCtrl.abort();
+  abortCtrl = new AbortController();
+  
+  const startTime = Date.now();
+  try {
+    const res = await fetch(API_BASE + currentMode, { signal: abortCtrl.signal });
+    const json = await res.json();
+    
+    const historyList = json.Data || json.list || json.data || [];
 
-  document.getElementById("led-t").classList.toggle("on", r === "TÀI");
-  document.getElementById("led-x").classList.toggle("on", r === "XỈU");
+    if (historyList && historyList.length > 0) {
+      const latest = historyList[0];
+      let currentId = BigInt(latest.SessionId || latest.id || latest.sessionId || 0);
+      let nextId = (currentId + 1n).toString();
 
-  const sttEl = document.getElementById("stt");
-  if (c >= 85) {
-    sttEl.style.color = "#00ff88";
-    sttEl.innerText = "CẦU RẤT MẠNH - VÀO MẠNH";
-  } else if (c >= 72) {
-    sttEl.style.color = "#ffd700";
-    sttEl.innerText = "KÈO THƠM - NÊN VÀO";
-  } else if (c >= 60) {
-    sttEl.style.color = "#ffcc00";
-    sttEl.innerText = "CÂN NHẮC - CẦU TRUNG BÌNH";
-  } else {
-    sttEl.style.color = "#ff5555";
-    sttEl.innerText = "CẨN THẬN - TRÁNH CƯỢC LỚN";
+      const prediction = runMasterAI(historyList);
+      const ping = Date.now() - startTime;
+
+      renderUI(nextId, prediction);
+    }
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      console.log("Proxy reconnecting...");
+    }
   }
 }
 
-// ================== MODE & CONTROL ==================
-function setMode(m) {
-  mode = m;
-  localStorage.setItem('tuanx3000_mode', m);
+// ================== RENDER UI ==================
+function renderUI(sessionId, pred) {
+  document.getElementById("sid").innerText = `#${sessionId}`;
+  document.getElementById("res").innerText = pred.result;
 
+  // LED
+  document.getElementById("led-t").classList.toggle("on", pred.result === "TÀI");
+  document.getElementById("led-x").classList.toggle("on", pred.result === "XỈU");
+
+  // Status Text
+  const sttEl = document.getElementById("stt");
+  if (pred.confidence > 82) {
+    sttEl.style.color = "#00ff88";
+    sttEl.innerText = "TỶ LỆ THẮNG CAO";
+  } else if (pred.confidence > 68) {
+    sttEl.style.color = "#ffd700";
+    sttEl.innerText = "KÈO THƠM";
+  } else {
+    sttEl.style.color = "#ffaa00";
+    sttEl.innerText = "CẨN THẬN";
+  }
+
+  // Extra Info
+  document.getElementById("extra-info").innerText = 
+    `Streak: ${pred.streak} | Entropy: ${pred.entropy}`;
+
+  document.getElementById("ping-box").innerText = 
+    `Ping: ${Date.now() % 999 + 30}ms | TuanX5000 v5.1`;
+}
+
+// ================== MODE & CONTROLS ==================
+function setMode(m) {
+  currentMode = m;
+  localStorage.setItem('tuanx3000_mode', m);
+  
   document.getElementById("o-md5").classList.toggle("active", m === 'md5');
   document.getElementById("o-nohu").classList.toggle("active", m === 'nohu');
-
-  document.getElementById("label").innerText = m === 'md5' 
-    ? "TX MD5 TUANX3000" 
-    : "TX NỔ HŨ TUANX3000";
-
+  
+  document.getElementById("label").innerText = m === 'md5' ? 'MAX789 MD5 ACTIVE' : 'MAX789 NỔ HŨ ACTIVE';
+  
   toggleMenu();
-  refresh();
+  refreshData();
 }
-// ================== NÚT QUAY LẠI INDEX ==================
-function goBackToIndex() {
-    if (confirm("Bạn có muốn quay lại?")) {
-        window.location.href = "main.html";
-    }
-}
+
 function toggleMenu() {
   const p = document.getElementById("m-panel");
   p.style.display = (p.style.display === "block") ? "none" : "block";
 }
 
 function resize(f) {
-  currentScale = Math.max(0.65, Math.min(1.45, currentScale * f));
+  currentScale = Math.max(0.6, Math.min(1.5, currentScale * f));
   localStorage.setItem('tuanx3000_scale', currentScale);
   document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 }
 
-// ================== DRAG ==================
+// Drag & Touch
 const el = document.getElementById("tool-root");
-let isDrag = false, offset = [0,0];
+let isDrag = false, offset = [0, 0];
 
 const startDrag = (e) => {
   isDrag = true;
@@ -310,14 +366,17 @@ el.addEventListener('mousedown', startDrag);
 el.addEventListener('touchstart', startDrag, {passive: false});
 window.addEventListener('mousemove', moveDrag);
 window.addEventListener('touchmove', moveDrag, {passive: false});
-window.addEventListener('mouseup', () => { isDrag = false; el.style.transition = 'transform 0.3s ease'; });
+window.addEventListener('mouseup', () => { 
+  isDrag = false; 
+  el.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
+});
 window.addEventListener('touchend', () => isDrag = false);
 
-// ================== KHỞI ĐỘNG ==================
+// ================== INIT ==================
 document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
-setMode(mode);
-setInterval(refresh, 3800);   // Refresh nhanh hơn một chút
-refresh();
+setMode(currentMode);
+setInterval(refreshData, 3500);
+refreshData();
 </script>
 </body>
 </html>
