@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TOOL GAME V1 - TUANX3000</title>
+    <style>
+        body { background-color: #050505; color: #00ff41; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; overflow: hidden; }
+        * { box-sizing: border-box; user-select: none; }
+        
+        .container { position: relative; z-index: 10; max-width: 450px; margin: 0 auto; padding: 20px; height: 100vh; display: flex; flex-direction: column; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); }
+        
+        .header { text-align: center; margin-bottom: 15px; }
+        .google-badge { background: #fff; color: #444; font-weight: bold; font-size: 10px; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
+        h1 { margin: 0; color: #00ff41; text-shadow: 0 0 15px rgba(0, 255, 65, 0.5); font-size: 28px; text-transform: uppercase; }
+        
+        .notif-bar { background: rgba(255, 0, 170, 0.1); border: 1px solid #ff00aa; color: #ff00aa; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; font-weight: bold; text-align: center; animation: pulse 2s infinite; display: block; text-decoration: none; }
+
+        .auth-tabs { display: flex; border-bottom: 1px solid #333; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 12px; background: transparent; border: none; color: #666; font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; transition: 0.3s; }
+        .tab-btn.active { color: #00ff41; border-bottom: 2px solid #00ff41; }
+        
+        .form-group { display: none; animation: slideUp 0.4s ease forwards; }
+        .form-group.active { display: block; }
+        
+        input { width: 100%; padding: 14px; margin: 8px 0; background: #111; border: 1px solid #333; color: #fff; border-radius: 8px; outline: none; text-align: center; font-size: 14px; transition: 0.3s; }
+        input:focus { border-color: #00ff41; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2); }
+        
+        .btn-submit { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; transition: 0.2s; }
+        .btn-login { background: linear-gradient(90deg, #008000, #00ff41); color: #000; }
+        .btn-reg { background: linear-gradient(90deg, #333, #555); color: #fff; }
+
+        #msg-status { margin-top: 15px; font-size: 13px; text-align: center; min-height: 20px; font-weight: bold; }
+        .hidden { display: none !important; }
+
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,0,170,0.4); } 70% { box-shadow: 0 0 0 12px rgba(255,0,170,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,170,0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <span class="google-badge">Tuanx3000</span>
+            <h1>TOOL GAME V1</h1>
+        </div>
+
+        <a class="notif-bar" href="https://t.me/tuanx3000" target="_blank">
+            📢 MUA KEY VIP LIÊN HỆ: @TUANX3000
+        </a>
+
+<a href="https://t.me/toollc79md5" class="tele-float" target="_blank">✈️ GROUP</a>
+
+        <div id="auth-screen">
+            <div class="auth-tabs">
+                <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">ĐĂNG NHẬP</button>
+                <button class="tab-btn" id="tab-reg" onclick="switchTab('register')">ĐĂNG KÝ</button>
+            </div>
+            
+            <div id="login-form" class="form-group active">
+                <input type="text" id="login-user" placeholder="Tên tài khoản">
+                <input type="password" id="login-pass" placeholder="Mật khẩu">
+                <button class="btn-submit btn-login" onclick="handleAuth('login')">VÀO HỆ THỐNG</button>
+            </div>
+            
+            <div id="reg-form" class="form-group">
+                <input type="text" id="reg-user" placeholder="Tên tài khoản mới">
+                <input type="password" id="reg-pass" placeholder="Mật khẩu mới">
+                <input type="text" id="reg-sdt" placeholder="Số điện thoại">
+                <button class="btn-submit btn-reg" onclick="handleAuth('register')">ĐĂNG KÝ NGAY</button>
+            </div>
+        </div>
+
+        <div id="msg-status"></div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcWdVTthI3G7AhFHJLyUX_WhMpOOyxCtzv4KvmQ1GUkzedlpGEf0qQRTQgzt1lygsm2w/exec";
+
+        // ================== KIỂM TRA ĐÃ ĐĂNG NHẬP CHƯA ==================
+        function checkAlreadyLoggedIn() {
+            const savedUser = localStorage.getItem('tuanx3000_user');
+            if (savedUser) {
+                window.location.href = `main.html?u=${encodeURIComponent(savedUser)}`;
+            }
+        }
+
+        function switchTab(tab) {
+            document.getElementById('login-form').classList.toggle('active', tab === 'login');
+            document.getElementById('reg-form').classList.toggle('active', tab === 'register');
+            document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+            document.getElementById('tab-reg').classList.toggle('active', tab === 'register');
+        }
+
+        async function handleAuth(type) {
+            const msg = document.getElementById('msg-status');
+            let payload = { action: type };
+            
+            if (type === 'login') {
+                payload.username = document.getElementById('login-user').value.trim();
+                payload.password = document.getElementById('login-pass').value.trim();
+            } else {
+                payload.username = document.getElementById('reg-user').value.trim();
+                payload.password = document.getElementById('reg-pass').value.trim();
+                payload.sdt = document.getElementById('reg-sdt').value.trim();
+            }
+
+            if (!payload.username || !payload.password) {
+                msg.style.color = "#ff4d4d"; 
+                msg.innerText = "❌ Vui lòng điền đầy đủ thông tin!";
+                return;
+            }
+
+            msg.style.color = "#ffbc00"; 
+            msg.innerText = "⏳ Đang xử lý...";
+
+            try {
+                const res = await fetch(SCRIPT_URL, { 
+                    method: "POST", 
+                    body: JSON.stringify(payload) 
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    if (type === 'login') {
+                        // LƯU THÔNG TIN ĐĂNG NHẬP
+                        localStorage.setItem('tuanx3000_user', payload.username);
+                        
+                        // Chuyển sang trang chủ
+                        window.location.href = `main.html?u=${encodeURIComponent(payload.username)}`;
+                    } else {
+                        msg.style.color = "#00ff41"; 
+                        msg.innerText = "✅ Đăng ký thành công! Hãy đăng nhập.";
+                        switchTab('login');
+                    }
+                } else {
+                    msg.style.color = "#ff4d4d"; 
+                    msg.innerText = "⚠️ " + (data.message || "Lỗi!");
+                }
+            } catch (e) {
+                msg.style.color = "#ff4d4d"; 
+                msg.innerText = "🚫 Lỗi kết nối server!";
+            }
+        }
+
+        // KHỞI CHẠY - Kiểm tra ngay khi mở trang
+        window.onload = checkAlreadyLoggedIn;
+    </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HỒ SƠ - TUANX3000</title>
+    <style>
+        body { 
+            background: #050505; 
+            color: #fff; 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            margin: 0; 
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: radial-gradient(circle at center, #0f0f1a 0%, #000 100%);
+            overflow: hidden;
+        }
+
+        .profile-card { 
+            background: linear-gradient(145deg, #0f0f0f, #1a1a1a);
+            border: 2px solid #00ff41; 
+            border-radius: 25px; 
+            padding: 30px; 
+            width: 92%;
+            max-width: 400px; 
+            box-shadow: 0 0 40px rgba(0,255,65,0.2); 
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .avatar { 
+            width: 80px; height: 80px; 
+            background: #000; border-radius: 50%; 
+            border: 2px solid #00ff41; 
+            margin: 0 auto 15px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 35px; box-shadow: 0 0 15px rgba(0,255,65,0.3);
+        }
+
+        h3 { text-align:center; color:#00ff41; margin: 0 0 20px 0; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; }
+
+        .info-container { background: rgba(0,0,0,0.4); border-radius: 15px; padding: 5px 15px; border: 1px solid #222; }
+        .info-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #222; font-size: 14px; align-items: center; }
+        .info-row:last-child { border-bottom: none; }
+        .label { color: #888; flex-shrink: 0; }
+        .value { color: #00ff41; font-weight: bold; text-align: right; word-break: break-all; margin-left: 15px; }
+        
+        .btn-group { margin-top: 25px; display: flex; flex-direction: column; gap: 10px; }
+        .btn-back { 
+            width: 100%; padding: 15px; background: #1a1a1a; color: #00ff41; 
+            border: 1px solid #00ff41; border-radius: 12px; cursor: pointer; 
+            font-size: 14px; font-weight: 900; text-transform: uppercase; transition: 0.2s;
+        }
+        .btn-back:active { background: #00ff41; color: #000; transform: scale(0.96); }
+
+        .btn-logout { 
+            width: 100%; padding: 15px; background: rgba(255, 77, 77, 0.1); color: #ff4d4d; 
+            border: 1px solid #ff4d4d; border-radius: 12px; cursor: pointer; 
+            font-size: 14px; font-weight: 900; text-transform: uppercase; transition: 0.2s;
+        }
+        .btn-logout:active { background: #ff4d4d; color: #fff; transform: scale(0.96); }
+
+        .note { text-align: center; color: #555; font-size: 11px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="profile-card">
+        <div class="avatar">👤</div>
+        <h3>HỒ SƠ TÀI KHOẢN</h3>
+        
+        <div class="info-container">
+            <div class="info-row"><span class="label">ID Tài khoản:</span><span class="value" id="h-user">Đang tải...</span></div>
+            <div class="info-row"><span class="label">Số điện thoại:</span><span class="value" id="h-sdt">...</span></div>
+            <div class="info-row"><span class="label">Số dư hiện tại:</span><span class="value" style="color: #ffd700;" id="h-balance">0đ</span></div>
+            <div class="info-row"><span class="label">Mã Key VIP:</span><span class="value" id="h-key">...</span></div>
+            <div class="info-row"><span class="label">Hạn sử dụng:</span><span class="value" id="h-exp">...</span></div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-back" onclick="goHome()">🔙 VỀ TRANG CHỦ</button>
+            <button class="btn-logout" onclick="logout()">🚪 ĐĂNG XUẤT</button>
+        </div>
+        
+        <div class="note">Support: <b>@Tuanx3000</b></div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcWdVTthI3G7AhFHJLyUX_WhMpOOyxCtzv4KvmQ1GUkzedlpGEf0qQRTQgzt1lygsm2w/exec";
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get("u");
+
+        async function loadProfile() {
+            if (!username) {
+                window.location.replace('index.html');
+                return;
+            }
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=get_info&username=${encodeURIComponent(username)}`);
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('h-user').innerText = data.username;
+                    document.getElementById('h-sdt').innerText = data.sdt || "Chưa có";
+                    document.getElementById('h-balance').innerText = Number(data.balance || 0).toLocaleString('vi-VN') + "đ";
+                    
+                    const keyEl = document.getElementById('h-key');
+                    // Logic hiển thị mã Key trực tiếp
+                    if (!data.key || data.key === "") {
+                        keyEl.innerText = "CHƯA CÓ KEY";
+                        keyEl.style.color = "#ff4d4d";
+                    } else if (data.key === "keychoduyet") {
+                        keyEl.innerText = "ĐANG CHỜ DUYỆT";
+                        keyEl.style.color = "#ffae00";
+                    } else {
+                        // HIỆN THẲNG MÃ KEY Ở ĐÂY
+                        keyEl.innerText = data.key;
+                        keyEl.style.color = "#00ff41";
+                    }
+                    
+                    document.getElementById('h-exp').innerText = data.expiry || "Hết hạn";
+                }
+            } catch (e) { 
+                console.error(e); 
+                document.getElementById('h-user').innerText = "LỖI KẾT NỐI";
+            }
+        }
+
+        function goHome() {
+            window.location.href = `main.html?u=${encodeURIComponent(username)}`;
+        }
+
+        function logout() {
+            if (confirm("Anh Tuấn có chắc muốn đăng xuất?")) {
+                localStorage.clear();
+                sessionStorage.clear();
+                // Sử dụng replace để xóa lịch sử truy cập, không cho phép back lại
+                window.location.replace('index.html');
+            }
+        }
+
+        window.onload = loadProfile;
+    </script>
+</body>
+</html>

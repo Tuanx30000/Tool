@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TOOL GAME V1 - TUANX3000</title>
+    <style>
+        body { background-color: #050505; color: #00ff41; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; overflow: hidden; }
+        * { box-sizing: border-box; user-select: none; }
+        
+        .container { position: relative; z-index: 10; max-width: 450px; margin: 0 auto; padding: 20px; height: 100vh; display: flex; flex-direction: column; background: radial-gradient(circle at center, #0f0f1a 0%, #000 100%); }
+        
+        .header { text-align: center; margin-bottom: 15px; }
+        .google-badge { background: #fff; color: #444; font-weight: bold; font-size: 10px; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
+        h1 { margin: 0; color: #00ff41; text-shadow: 0 0 15px rgba(0, 255, 65, 0.5); font-size: 28px; text-transform: uppercase; }
+        
+        .balance { position: absolute; top: 15px; right: 15px; background: linear-gradient(90deg, #00ff41, #00cc33); color: #000; padding: 8px 14px; border-radius: 30px; font-size: 13px; font-weight: bold; z-index: 100; box-shadow: 0 0 15px rgba(0,255,65,0.6); }
+
+        .notif-bar { background: rgba(255, 0, 170, 0.1); border: 1px solid #ff00aa; color: #ff00aa; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; font-weight: bold; text-align: center; text-decoration: none; animation: pulse 2s infinite; display: block; }
+
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 5px; padding-bottom: 30px; }
+        .game-card { background: #111; border: 1px solid #333; border-radius: 12px; padding: 8px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .game-card:hover { border-color: #00ff41; background: rgba(0, 255, 65, 0.05); transform: scale(1.03); }
+        
+        .game-thumb { width: 100%; height: 75px; background: #000; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid #222; overflow: hidden; }
+        .game-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .game-card span { font-weight: bold; font-size: 10px; color: #00ff41; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        #msg-status { margin-top: 15px; font-size: 13px; text-align: center; min-height: 20px; font-weight: bold; }
+        .hidden { display: none !important; }
+
+        /* BOTTOM BAR */
+        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #111; border-top: 2px solid #00ff41; display: flex; padding: 8px; z-index: 1000; }
+        .bottom-btn { flex: 1; padding: 12px; margin: 0 5px; background: #1a1a1a; color: #00ff41; border: 1px solid #00ff41; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; font-size: 13px; transition: 0.2s; }
+        .bottom-btn:active { background: #00ff41; color: #000; }
+
+        /* MODAL NÂNG CẤP */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: linear-gradient(145deg, #0f0f0f, #1a1a1a); border: 2px solid #00ff41; border-radius: 25px; padding: 25px; width: 92%; max-width: 380px; box-shadow: 0 0 40px rgba(0,255,65,0.2); position: relative; }
+        .modal-title { color: #00ff41; text-align: center; font-size: 20px; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Nạp tiền Input */
+        .input-group { position: relative; margin: 20px 0; }
+        .input-group input { width: 100%; padding: 15px; background: #000; border: 1px solid #333; border-radius: 12px; color: #00ff41; font-size: 20px; text-align: center; outline: none; font-weight: bold; }
+        .input-group input:focus { border-color: #00ff41; box-shadow: 0 0 10px rgba(0,255,65,0.3); }
+
+        /* Gói Key Item */
+        .package-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .package-item { background: #111; border: 1px solid #333; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
+        .package-item.selected { border-color: #00ff41; background: rgba(0, 255, 65, 0.1); box-shadow: inset 0 0 10px rgba(0,255,65,0.2); }
+        .package-name { font-weight: bold; color: #fff; font-size: 15px; }
+        .package-price { color: #00ff41; font-weight: bold; }
+
+        .btn-action { background: #00ff41; color: #000; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 900; font-size: 16px; cursor: pointer; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,255,65,0.3); }
+        .btn-close { background: transparent; color: #888; border: none; width: 100%; padding: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
+
+        /* Màn hình Key VIP */
+        #key-screen { animation: fadeIn 0.4s ease forwards; text-align: center; }
+        .key-header { color: #00ff41; font-size: 26px; font-weight: 900; text-shadow: 0 0 20px #00ff41; margin: 20px 0 10px; }
+        .key-banner { background: linear-gradient(90deg, #4b0082, #8a2be2); color: #fff; padding: 12px 15px; border-radius: 12px; margin: 15px 0; font-weight: bold; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(138, 43, 226, 0.6); }
+        .key-game { color: #00ff88; font-size: 20px; font-weight: 800; margin: 20px 0 15px; text-shadow: 0 0 10px #00ff88; }
+        .key-input-container { position: relative; margin: 15px 0 25px; }
+        .key-input-container input { width: 100%; padding: 18px 20px 18px 55px; background: #1a1a1a; border: 2px solid #333; border-radius: 12px; color: #fff; font-size: 18px; font-weight: bold; text-align: center; letter-spacing: 3px; outline: none; }
+        .key-input-container::before { content: "🔑"; position: absolute; left: 20px; top: 50%; transform: translateY(-50%); font-size: 26px; }
+        .btn-key-activate { background: linear-gradient(90deg, #00ff41, #00cc33); color: #000; font-weight: 900; font-size: 18px; padding: 16px; border: none; border-radius: 12px; width: 100%; margin-bottom: 12px; box-shadow: 0 0 20px rgba(0,255,65,0.6); cursor: pointer;}
+        .btn-key-back { background: #333; color: #ccc; font-weight: bold; padding: 14px; border: none; border-radius: 12px; width: 100%; cursor: pointer;}
+
+        .tele-float { position: fixed; bottom: 70px; right: 15px; background: #0088cc; color: #fff; padding: 10px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 12px; z-index: 999; box-shadow: 0 0 10px rgba(0,136,204,0.5); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,0,170,0.4); } 70% { box-shadow: 0 0 0 12px rgba(255,0,170,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,170,0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="notification-bell" onclick="showInboxModal()" 
+             style="position: absolute; top: 15px; left: 15px; background: rgba(0,255,65,0.15); border: 1px solid #00ff41; color: #00ff88; padding: 8px 12px; border-radius: 50%; font-size: 22px; cursor: pointer; z-index: 999; box-shadow: 0 0 15px rgba(0,255,65,0.4);">
+            ✉️
+        </div>
+
+        <div class="header">
+            <span class="google-badge">Tuanx3000</span>
+            <h1 id="main-title">DANH MỤC GAME</h1>
+        </div>
+
+        <div id="balance-display" class="balance">
+            💰 <span id="balance-amount">0</span> VND
+        </div>
+
+        <a class="notif-bar" href="https://t.me/tuanx3000" target="_blank">
+            📢 MUA KEY VIP LIÊN HỆ: @TUANX3000
+        </a>
+
+        <div id="game-screen">
+            <p style="text-align:center; font-size:11px; color:#888; margin-bottom:15px;">CHỌN GAME ĐỂ KÍCH HOẠT</p>
+            <div class="game-grid">
+                <div class="game-card" onclick="openKey('SUNWIN', 'toolsunwin.html')"><div class="game-thumb"><img src="https://i.ibb.co/1DTdSJV/IMG-5590.png" alt="Sunwin"></div><span>SUNWIN</span></div>
+                <div class="game-card" onclick="openKey('LC79', 'toollc79.html')"><div class="game-thumb"><img src="https://i.ibb.co/r2Vq2B8k/IMG-5592.jpg" alt="LC79"></div><span>LC79</span></div>
+                <div class="game-card" onclick="openKey('MAX789', 'toolmax789.html')"><div class="game-thumb"><img src="https://i.ibb.co/n8573PZD/IMG-5593.jpg" alt="MAX789"></div><span>MAX789</span></div>
+                <div class="game-card" onclick="openKey('XOCDIA88', 'toolxocdia88.html')"><div class="game-thumb"><img src="https://i.ibb.co/JWVpBF4j/IMG-5616.png" alt="xocdia88"></div><span>XOCDIA88</span></div>
+                <div class="game-card" onclick="openKey('BETVIP', 'toolbetvip.html')"><div class="game-thumb"><img src="https://i.ibb.co/8DMbjXvT/IMG-4161.png" alt="Betvip"></div><span>BETVIP</span></div>
+                <div class="game-card" onclick="openKey('GO88', 'toolgo88.html')"><div class="game-thumb"><img src="https://i.ibb.co/n8573PZD/IMG-5593.jpg" style="filter: brightness(0.6);" alt="GO88"></div><span>GO88</span></div>
+            </div>
+        </div>
+
+        <div id="key-screen" class="hidden">
+            <h1 class="key-header">XÁC MINH KEY</h1>
+            <div class="key-banner">
+                <span>📣</span>
+                <span>MUA KEY VIP LIÊN HỆ: @TUANX3000</span>
+            </div>
+            <div id="key-game-name" class="key-game">CỔNG GAME:</div>
+            
+            <div class="key-input-container">
+                <input type="text" id="key-input" placeholder="NHẬP MÃ KEY VIP" maxlength="25">
+            </div>
+
+            <button class="btn-key-activate" onclick="verifyFinal()">KÍCH HOẠT TOOL</button>
+            <button class="btn-key-back" onclick="backToGame()">QUAY LẠI</button>
+        </div>
+
+        <div id="msg-status"></div>
+    </div>
+
+    <div id="bottom-bar" class="bottom-bar">
+        <button class="bottom-btn" onclick="showNapTienModal()">💰 NẠP TIỀN</button>
+        <button class="bottom-btn" onclick="goToHoso()">👤 HỒ SƠ</button>
+        <button class="bottom-btn" onclick="showMuaKeyModal()">🛒 MUA KEY</button>
+    </div>
+
+    <a href="https://t.me/toollc79md5" class="tele-float" target="_blank">✈️ GROUP</a>
+
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modal-title" class="modal-title"></h3>
+            <div id="modal-body"></div>
+            <div id="modal-footer" style="margin-top: 20px;">
+                <button id="modal-confirm-btn" class="btn-action hidden">XÁC NHẬN</button>
+                <button class="btn-close" onclick="closeModal()">ĐÓNG</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcWdVTthI3G7AhFHJLyUX_WhMpOOyxCtzv4KvmQ1GUkzedlpGEf0qQRTQgzt1lygsm2w/exec";
+        let serverData = {};
+        let targetPage = "";
+        let selectedPackage = null;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get("u");
+
+        if (!username) window.location.href = "index.html";
+
+        async function loadUserData() {
+            try {
+                const res = await fetch(SCRIPT_URL + `?action=get_info&username=${encodeURIComponent(username)}`, { cache: 'no-store' });
+                const data = await res.json();
+                if (data.success) {
+                    serverData = data;
+                    document.getElementById('balance-amount').innerText = Number(data.balance || 0).toLocaleString('vi-VN');
+                } else {
+                    alert("Không tìm thấy tài khoản!");
+                    window.location.href = "index.html";
+                }
+            } catch (e) {
+                console.error("Lỗi tải data:", e);
+            }
+        }
+
+        function openKey(name, url) {
+            targetPage = url;
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('key-screen').classList.remove('hidden');
+            document.getElementById('key-game-name').innerText = "CỔNG GAME: " + name.toUpperCase();
+            document.getElementById('main-title').innerText = "XÁC MINH KEY";
+            document.getElementById('msg-status').innerText = "";
+        }
+
+        function backToGame() {
+            document.getElementById('key-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('main-title').innerText = "DANH MỤC GAME";
+            document.getElementById('msg-status').innerText = "";
+        }
+
+        // --- XÁC MINH KEY VÀO TOOL ---
+        function verifyFinal() {
+            const inputKey = document.getElementById('key-input').value.trim();
+            const msg = document.getElementById('msg-status');
+
+            if (!inputKey) {
+                msg.style.color = "#ff4d4d"; 
+                msg.innerText = "❌ Vui lòng nhập Key VIP!";
+                return;
+            }
+            if (!serverData.key || inputKey !== serverData.key || inputKey === "keychoduyet") {
+                msg.style.color = "#ff4d4d"; 
+                msg.innerText = "❌ KEY KHÔNG ĐÚNG HOẶC CHƯA ĐƯỢC DUYỆT!";
+                return;
+            }
+            if (serverData.expiry && serverData.today && serverData.expiry <= serverData.today) {
+                msg.style.color = "#ff4d4d"; 
+                msg.innerText = "❌ KEY ĐÃ HẾT HẠN! VUI LÒNG GIA HẠN THÊM.";
+                return;
+            }
+
+            msg.style.color = "#00ff41"; 
+            msg.innerText = "🚀 ĐANG KÍCH HOẠT TOOL...";
+            setTimeout(() => { window.location.href = targetPage; }, 800);
+        }
+
+        // --- MÀN HÌNH NẠP TIỀN ---
+        function showNapTienModal() {
+            const html = `
+                <p style="color:#888; text-align:center; font-size:13px;">Hệ thống nạp tự động qua QR Ngân hàng</p>
+                <div class="input-group">
+                    <input type="number" id="nap-amount-input" placeholder="Nhập số tiền..." min="10000">
+                </div>
+                <p style="color:#555; text-align:center; font-size:11px;">Tối thiểu 10.000đ - Xử lý trong 30s</p>
+            `;
+            document.getElementById('modal-title').innerText = "NẠP TIỀN VÀO VÍ";
+            document.getElementById('modal-body').innerHTML = html;
+            const btn = document.getElementById('modal-confirm-btn');
+            btn.className = "btn-action";
+            btn.innerText = "TẠO MÃ QR NẠP TIỀN";
+            btn.onclick = () => {
+                const amt = document.getElementById('nap-amount-input').value;
+                if (!amt || amt < 10000) {
+                    alert("❌ Số tiền tối thiểu là 10.000đ");
+                    return;
+                }
+                window.location.href = `qr.html?amount=${amt}&username=${encodeURIComponent(username)}`;
+            };
+            document.getElementById('custom-modal').classList.add('active');
+        }
+
+        // --- MÀN HÌNH MUA KEY ---
+        function showMuaKeyModal() {
+            if (!serverData.balance || parseFloat(serverData.balance) <= 0) {
+                alert("❌ Bạn chưa có số dư. Vui lòng NẠP TIỀN trước khi mua key!");
+                return;
+            }
+            selectedPackage = null;
+            const html = `
+                <div class="package-list">
+                    <div class="package-item" onclick="selectPkg(this, '1ngay', 20000)">
+                        <span class="package-name">💎 Gói 1 Ngày</span>
+                        <span class="package-price">20.000đ</span>
+                    </div>
+                    <div class="package-item" onclick="selectPkg(this, '1tuan', 60000)">
+                        <span class="package-name">🌟 Gói 7 Ngày</span>
+                        <span class="package-price">60.000đ</span>
+                    </div>
+                    <div class="package-item" onclick="selectPkg(this, '1thang', 200000)">
+                        <span class="package-name">🔥 Gói 30 Ngày</span>
+                        <span class="package-price">200.000đ</span>
+                    </div>
+                    <div class="package-item" onclick="selectPkg(this, 'vinhvien', 300000)">
+                        <span class="package-name">👑 Gói Vĩnh Viễn</span>
+                        <span class="package-price">300.000đ</span>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-title').innerText = "🛒 CHỌN GÓI KEY VIP";
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('modal-confirm-btn').className = "btn-action hidden";
+            document.getElementById('custom-modal').classList.add('active');
+        }
+
+        function selectPkg(el, type, price) {
+            document.querySelectorAll('.package-item').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedPackage = { type, price };
+            const btn = document.getElementById('modal-confirm-btn');
+            btn.classList.remove('hidden');
+            btn.innerText = `XÁC NHẬN MUA - ${price.toLocaleString('vi-VN')}đ`;
+            btn.onclick = confirmBuy;
+        }
+
+        async function confirmBuy() {
+            if (!selectedPackage) return;
+            if (parseFloat(serverData.balance) < selectedPackage.price) {
+                alert("❌ Số dư không đủ, vui lòng nạp thêm!");
+                return;
+            }
+            
+            const btn = document.getElementById('modal-confirm-btn');
+            btn.innerText = "ĐANG XỬ LÝ...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "buy_key", username: username, package: selectedPackage.type, price: selectedPackage.price })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    serverData.balance = data.newBalance || (serverData.balance - selectedPackage.price);
+                    document.getElementById('balance-amount').innerText = Number(serverData.balance).toLocaleString('vi-VN');
+                    alert("✅ Đã gửi yêu cầu mua key thành công! Vui lòng chờ Admin duyệt.");
+                    closeModal();
+                } else {
+                    alert("❌ Lỗi: " + (data.message || "Không thể xử lý."));
+                    closeModal();
+                }
+            } catch (e) { 
+                alert("❌ Lỗi kết nối server!"); 
+                closeModal(); 
+            }
+        }
+
+        // --- HỘP THƯ VÀ HỒ SƠ ---
+        function showInboxModal() {
+            const html = `
+                <div style="background:#111; border-radius:12px; padding:15px; max-height:380px; overflow-y:auto; color:#ddd; font-size:14px; margin-bottom: 10px;">
+                    <div style="padding:12px; background:#1f1f1f; border-radius:8px; margin-bottom:10px; border-left: 3px solid #00ff41;">
+                        <strong style="color:#00ff41;">Tuanx3000 (Admin) manhx9000</strong><br>
+                        <small style="color:#888;">Hệ thống</small><br>
+                        <span style="color:#ffd700; margin-top: 5px; display: inline-block;">Chào mừng bạn sử dụng hệ thống Tool VIP!</span>
+                    </div>
+                </div>
+                <p style="text-align:center; color:#666; font-size:13px;">Thông báo realtime sẽ được cập nhật sau.</p>
+            `;
+            document.getElementById('modal-title').innerText = "📬 HỘP THƯ";
+            document.getElementById('modal-body').innerHTML = html;
+            document.getElementById('modal-confirm-btn').classList.add('hidden');
+            document.getElementById('custom-modal').classList.add('active');
+        }
+
+        function closeModal() { 
+            document.getElementById('custom-modal').classList.remove('active'); 
+            selectedPackage = null;
+        }
+
+        function goToHoso() { 
+            window.location.href = `hoso.html?u=${encodeURIComponent(username)}`; 
+        }
+
+        window.onload = loadUserData;
+    </script>
+</body>
+</html>

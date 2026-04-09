@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>XOCDIA88 PREDICTOR • ANH TUẤN MMO</title>
+<style>
+html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; font-family:-apple-system, system-ui, sans-serif; }
+#game-frame { position:absolute; inset:0; width:100%; height:100%; border:0; z-index:1; }
+
+#m-btn {
+  position:fixed; top:15px; right:15px; width:48px; height:48px;
+  background:rgba(0,255,255,0.2); border:1.5px solid #00eaff;
+  border-radius:14px; display:flex; justify-content:center; align-items:center;
+  z-index:1000005; cursor:pointer; color:#00eaff; font-size:24px; backdrop-filter:blur(15px);
+}
+#m-panel {
+  position:fixed; top:75px; right:15px; width:210px;
+  background:rgba(10,10,15,0.95); border:1px solid #00eaff;
+  border-radius:18px; display:none; z-index:1000006; overflow:hidden;
+  box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+}
+.m-opt { color:#fff; padding:15px; font-size:13px; font-weight:700; cursor:pointer; border-bottom:1px solid #222; transition: 0.3s; }
+.m-opt:active { background:rgba(0,234,255,0.2); }
+.m-opt.active { color:#00eaff; background:rgba(0,234,255,0.1); }
+
+#tool-root {
+  position:fixed; left:50%; top:20%; transform:translate(-50%, -50%) scale(1);
+  width:320px; height:135px; border-radius:68px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 22px; z-index:1000000; touch-action:none;
+  background:rgba(15,15,22,0.85); backdrop-filter:blur(25px);
+  border:1.5px solid rgba(0,234,255,0.4);
+  box-shadow:0 25px 60px rgba(0,0,0,0.8); user-select:none;
+}
+.led { width:58px; height:58px; border-radius:50%; transition:0.4s; }
+.l-t { background:#081808; border:2px solid #00ff8811; }
+.l-x { background:#180808; border:2px solid #ff335511; }
+.on.l-t { background:#00ff88; box-shadow:0 0 50px #00ff88, inset 0 0 15px #fff; transform:scale(1.05); }
+.on.l-x { background:#ff3355; box-shadow:0 0 50px #ff3355, inset 0 0 15px #fff; transform:scale(1.05); }
+
+.core { flex:1; text-align:center; padding:0 10px; }
+#label { font-size:10px; color:#ffd700; font-weight:900; letter-spacing:1.5px; margin-bottom:4px; text-transform:uppercase; }
+#sid { font-size:14px; font-weight:900; color:#00eaff; font-family:monospace; letter-spacing:0.5px; }
+#res { font-size:28px; font-weight:900; color:#fff; text-shadow:0 0 15px rgba(255,255,255,0.4); margin:2px 0; }
+#stt { font-size:9px; font-weight:800; text-transform:uppercase; }
+#ping-box { font-size:8px; color:#555; margin-top:3px; font-weight:bold; }
+</style>
+</head>
+<body>
+
+<iframe id="game-frame" src="https://play.xocdia88.green"></iframe>
+<div id="m-btn" onclick="toggleMenu()">☰</div>
+<!-- NÚT QUAY LẠI INDEX - GÓC TRÁI TRÊN -->
+<div id="back-btn" onclick="goBackToIndex()" 
+     style="position:fixed; top:15px; left:15px; width:48px; height:48px;
+            background:rgba(0,234,255,0.18); border:1.5px solid #00eaff;
+            border-radius:14px; display:flex; justify-content:center; align-items:center;
+            z-index:1000005; cursor:pointer; color:#00eaff; font-size:22px; 
+            backdrop-filter:blur(12px); box-shadow:0 4px 15px rgba(0,234,255,0.25);">
+    ←
+</div>
+
+<div id="m-panel">
+  <div class="m-opt" id="o-nohu" onclick="setMode('nohu')">TX NỔ HŨ - LIVE</div>
+  <div class="m-opt" id="o-md5" onclick="setMode('md5')">TX MD5 - LIVE</div>
+  <div class="m-opt" onclick="resize(1.1)">PHÓNG TO (+)</div>
+  <div class="m-opt" onclick="resize(0.9)">THU NHỎ (-)</div>
+  <div class="m-opt" style="color:#ffcc00" onclick="location.reload()">LÀM MỚI TOOL</div>
+</div>
+
+<div id="tool-root">
+  <div id="led-t" class="led l-t"></div>
+  <div class="core">
+    <div id="label">XOCDIA88 PROXY ACTIVE</div>
+    <div id="sid">#DANG_KET_NOI</div>
+    <div id="res">...</div>
+    <div id="stt">ĐANG KHỞI TẠO AI</div>
+    <div id="ping-box">Ping: --ms | Proxy: OK</div>
+  </div>
+  <div id="led-x" class="led l-x"></div>
+</div>
+
+<script>
+// ================== PROXY MỚI CỦA MÀY ==================
+const PRIVATE_API = "https://proxyxocdia88.lot896613.workers.dev/?mode=";
+
+let mode = localStorage.getItem('xocdia_mode') || 'nohu'; 
+let currentScale = parseFloat(localStorage.getItem('xocdia_scale')) || 1.0;
+let abortCtrl = null;
+
+// ================== REFRESH DATA ==================
+async function refresh() {
+  if (abortCtrl) abortCtrl.abort();
+  abortCtrl = new AbortController();
+  
+  const start = Date.now();
+  try {
+    const res = await fetch(PRIVATE_API + mode, { signal: abortCtrl.signal });
+    const data = await res.json();
+    
+    const list = data.Data || [];
+    if (list.length > 0) {
+      const latest = list[0];
+      
+      let currentId = BigInt(latest.id || latest.sessionId || latest.SessionId || 0);
+      let nextId = (currentId + 1n).toString();
+
+      const ai = runAI(list);
+      const ping = Date.now() - start;
+      updateUI(nextId, ai.r, ai.c, ping);
+    }
+  } catch (e) {
+    if (e.name !== 'AbortError') console.error("Lỗi proxy:", e);
+  }
+}
+
+// ================== THUẬT TOÁN AI NÂNG CAO TUANX3000 v3.0 - MAX ACCURACY ==================
+function runAI(list) {
+  if (!list || list.length < 12) {
+    return { r: "TÀI", c: 53 };
+  }
+
+  // Xây dựng lịch sử T/X (tương thích tất cả proxy)
+  const history = list.slice(0, 250).map(item => {
+    let val = item.resultTruyenThong || item.result || item.BetSide || item.betSide || 
+              item.diceSum || item.SessionResult || "";
+    if (typeof val === 'number') {
+      return (val === 1 || val >= 11) ? "T" : "X";
+    }
+    const s = String(val).toUpperCase().trim();
+    return (s.includes("TÀI") || s.includes("TAI") || s === "1" || s.includes("BIG")) ? "T" : "X";
+  }).join("");
+
+  const len = history.length;
+  if (len < 12) return { r: "TÀI", c: 53 };
+
+  let tScore = 0, xScore = 0;
+  const w3 = history.substring(0, 3);
+  const w4 = history.substring(0, 4);
+  const w5 = history.substring(0, 5);
+
+  // 1. Multi-pattern với trọng số recent mạnh
+  for (let i = 1; i < len - 6; i++) {
+    const recency = Math.pow(0.96, i);
+
+    if (history.substring(i, i + 3) === w3) {
+      (history[i - 1] === "T") ? tScore += recency : xScore += recency;
+    }
+    if (history.substring(i, i + 4) === w4) {
+      (history[i - 1] === "T") ? tScore += recency * 1.45 : xScore += recency * 1.45;
+    }
+    if (history.substring(i, i + 5) === w5) {
+      (history[i - 1] === "T") ? tScore += recency * 1.8 : xScore += recency * 1.8;
+    }
+  }
+
+  // 2. Transition Matrix & Streak analysis
+  let tAfterT = 0, xAfterT = 0, tAfterX = 0, xAfterX = 0;
+  let streakT = 0, streakX = 0, maxStreak = 1, currentStreakChar = history[0];
+
+  for (let i = 1; i < len; i++) {
+    if (history[i] === "T") {
+      if (history[i - 1] === "T") { 
+        tAfterT++; 
+        streakT++; 
+        streakX = 0; 
+      } else { 
+        tAfterX++; 
+        streakT = 1; 
+        streakX = 0; 
+      }
+    } else {
+      if (history[i - 1] === "X") { 
+        xAfterX++; 
+        streakX++; 
+        streakT = 0; 
+      } else { 
+        xAfterT++; 
+        streakX = 1; 
+        streakT = 0; 
+      }
+    }
+
+    if (Math.max(streakT, streakX) > maxStreak) {
+      maxStreak = Math.max(streakT, streakX);
+      currentStreakChar = history[i];
+    }
+  }
+
+  // Momentum từ transition
+  const pRepeatT = tAfterT / (tAfterT + xAfterT + 0.001);
+  const pRepeatX = xAfterX / (xAfterX + tAfterX + 0.001);
+
+  // Quyết định kết quả
+  let final = (tScore > xScore) ? "TÀI" : "XỈU";
+
+  if (maxStreak >= 6) {
+    final = currentStreakChar === "T" ? "TÀI" : "XỈU";
+  } else if (maxStreak >= 4) {
+    if ((currentStreakChar === "T" && pRepeatT > 0.62) || 
+        (currentStreakChar === "X" && pRepeatX > 0.62)) {
+      final = currentStreakChar === "T" ? "TÀI" : "XỈU";
+    }
+  } else if (pRepeatT > 0.68 && pRepeatX < 0.55) {
+    final = "TÀI";
+  } else if (pRepeatX > 0.68 && pRepeatT < 0.55) {
+    final = "XỈU";
+  }
+
+  // Tính phần trăm tin cậy
+  let diff = Math.abs(tScore - xScore);
+  let base = 54 + Math.floor(diff * 8.2);
+
+  if (maxStreak >= 7) base += 26;
+  else if (maxStreak >= 5) base += 19;
+  else if (maxStreak >= 4) base += 11;
+
+  if (Math.max(pRepeatT, pRepeatX) > 0.70) base += 12;
+  else if (Math.max(pRepeatT, pRepeatX) > 0.63) base += 7;
+
+  // Phạt khi mơ hồ
+  if (diff < 2.5 && len > 80) base = Math.max(53, base - 18);
+  if (maxStreak === 1 && len > 60) base = Math.max(53, base - 9);
+
+  let percent = Math.max(53, Math.min(96, Math.round(base)));
+
+  if (percent > 78 && final === "TÀI" && pRepeatT < 0.48) percent -= 8;
+  if (percent > 78 && final === "XỈU" && pRepeatX < 0.48) percent -= 8;
+
+  return { r: final, c: percent };
+}
+
+// ================== UPDATE UI ==================
+function updateUI(id, r, c, ping) {
+  document.getElementById("sid").innerText = `#${id}`;
+  document.getElementById("res").innerText = r;
+  document.getElementById("ping-box").innerText = `Ping: ${ping}ms | Proxy: OK`;
+
+  document.getElementById("led-t").classList.toggle("on", r === "TÀI");
+  document.getElementById("led-x").classList.toggle("on", r === "XỈU");
+
+  const stt = document.getElementById("stt");
+  if (c > 82) {
+    stt.style.color = "#00ff88";
+    stt.innerText = "TỶ LỆ THẮNG CAO - VÀO MẠNH";
+  } else if (c > 68) {
+    stt.style.color = "#ffd700";
+    stt.innerText = "KÈO THƠM - VÀO ĐỀU";
+  } else {
+    stt.style.color = "#ffaa00";
+    stt.innerText = "CẨN THẬN";
+  }
+}
+
+// ================== MODE =================
+function goBackToIndex() {
+    if (confirm("Bạn có muốn quay lại?")) {
+        window.location.href = "main.html";
+    }
+}
+function setMode(m) {
+  mode = m; 
+  localStorage.setItem('xocdia_mode', m);
+  
+  document.getElementById("o-nohu").classList.toggle("active", m === 'nohu');
+  document.getElementById("o-md5").classList.toggle("active", m === 'md5');
+  
+  document.getElementById("label").innerText = m === 'md5' ? 'TX MD5 XOCDIA88' : 'TX NỔ HŨ XOCDIA88';
+  
+  toggleMenu();
+  refresh();
+}
+
+function toggleMenu() {
+  const p = document.getElementById("m-panel");
+  p.style.display = (p.style.display === "block") ? "none" : "block";
+}
+
+function resize(f) {
+  currentScale = Math.max(0.6, Math.min(1.5, currentScale * f));
+  localStorage.setItem('xocdia_scale', currentScale);
+  document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+}
+
+// Drag
+const el = document.getElementById("tool-root");
+let isDrag = false, offset = [0,0];
+
+const startDrag = (e) => {
+  isDrag = true; el.style.transition = 'none';
+  const c = e.touches ? e.touches[0] : e;
+  offset = [c.clientX - el.offsetLeft, c.clientY - el.offsetTop];
+};
+const moveDrag = (e) => {
+  if (!isDrag) return;
+  const c = e.touches ? e.touches[0] : e;
+  el.style.left = (c.clientX - offset[0]) + 'px';
+  el.style.top = (c.clientY - offset[1]) + 'px';
+};
+
+el.addEventListener('mousedown', startDrag);
+el.addEventListener('touchstart', startDrag, {passive: false});
+window.addEventListener('mousemove', moveDrag);
+window.addEventListener('touchmove', moveDrag, {passive: false});
+window.addEventListener('mouseup', () => { isDrag = false; el.style.transition = 'transform 0.3s'; });
+window.addEventListener('touchend', () => isDrag = false);
+
+// INIT
+document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
+setMode(mode);
+setInterval(refresh, 4000);
+refresh();
+</script>
+</body>
+</html>
