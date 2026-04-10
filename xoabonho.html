@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLEAR CACHE - TuanX3000 Tools</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #00ff88;
+            font-family: -apple-system, system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .container {
+            background: rgba(15, 15, 22, 0.95);
+            border: 2px solid #00eaff;
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+        }
+        h1 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        button {
+            background: #00eaff;
+            color: #000;
+            border: none;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #ffd700;
+            transform: scale(1.05);
+        }
+        .success {
+            color: #00ff88;
+            margin-top: 20px;
+            font-weight: bold;
+            display: none;
+        }
+        .info {
+            font-size: 13px;
+            color: #666;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 CLEAR CACHE TOOL</h1>
+        <p><strong>TuanX3000 Tools Reset</strong><br>
+        Xóa toàn bộ lịch sử cầu, mode, scale và dữ liệu cache của tất cả tool</p>
+
+        <button onclick="clearAllCache()">XÓA TOÀN BỘ CACHE</button>
+        <button onclick="clearOnlyHistory()">Chỉ xóa lịch sử cầu (giữ scale & mode)</button>
+
+        <div id="success" class="success">✅ ĐÃ XÓA CACHE THÀNH CÔNG!<br>Bạn có thể đóng tab này và mở tool mới.</div>
+
+        <div class="info">
+            Tool sẽ xóa:<br>
+            • localStorage của TuanX3000 (mode, scale, user)<br>
+            • Cache của các tool LC79, Betvip, Max789, XocDia88, Sunwin...
+        </div>
+    </div>
+
+    <script>
+        function clearAllCache() {
+            if (!confirm("Bạn có chắc muốn XÓA TOÀN BỘ cache?\n\nHành động này sẽ reset hết mode, scale và lịch sử.")) {
+                return;
+            }
+
+            // Xóa tất cả localStorage
+            localStorage.clear();
+
+            // Xóa một số key cụ thể (để an toàn hơn)
+            const keys = [
+                'tuanx3000_user', 'tuan_mmo_mode', 'tuan_mmo_scale',
+                'betvip_mode', 'betvip_scale',
+                'tuanx3000_mode', 'tuanx3000_scale',
+                'xocdia_mode', 'xocdia_scale',
+                'lc79_mode', 'lc79_scale'
+            ];
+            
+            keys.forEach(key => localStorage.removeItem(key));
+
+            showSuccess();
+        }
+
+        function clearOnlyHistory() {
+            if (!confirm("Chỉ xóa lịch sử cầu?\n\nMode và kích thước tool sẽ được giữ lại.")) {
+                return;
+            }
+
+            // Chỉ xóa các key liên quan đến mode và scale
+            const keysToKeepUser = ['tuanx3000_user'];
+            const allKeys = Object.keys(localStorage);
+            
+            allKeys.forEach(key => {
+                if (!keysToKeepUser.includes(key) && 
+                    (key.includes('mode') || key.includes('scale') || key.includes('history'))) {
+                    localStorage.removeItem(key);
+                }
+            });
+
+            showSuccess("✅ ĐÃ XÓA LỊCH SỬ CẦU THÀNH CÔNG!");
+        }
+
+        function showSuccess(message = "✅ ĐÃ XÓA CACHE THÀNH CÔNG!") {
+            const successDiv = document.getElementById('success');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            
+            // Tự động reload sau 2 giây
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        }
+
+        // Hiển thị thông tin khi mở trang
+        console.log("%cTuanX3000 Cache Cleaner đã sẵn sàng", "color:#00ff88; font-weight:bold");
+    </script>
+</body>
+</html>

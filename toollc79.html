@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>LC79 MASTER TOOL • ANH TUẤN MMO</title>
+<title>LC79 MASTER TOOL • TUANX3000 PRO</title>
 <style>
 html, body { 
   margin:0; padding:0; width:100%; height:100%; overflow:hidden; 
@@ -13,88 +13,87 @@ html, body {
   position:absolute; inset:0; width:100%; height:100%; border:0; z-index:1; 
 }
 
-/* Nút menu góc phải */
+/* Menu điều khiển */
 #m-btn {
   position:fixed; top:15px; right:15px; width:48px; height:48px;
-  background:rgba(0,255,255,0.2); border:1.5px solid #00eaff;
+  background:rgba(255,215,0,0.15); border:1.5px solid #ffd700;
   border-radius:14px; display:flex; justify-content:center; align-items:center;
-  z-index:1000005; cursor:pointer; color:#00eaff; font-size:24px; 
+  z-index:1000005; cursor:pointer; color:#ffd700; font-size:24px; 
   backdrop-filter:blur(15px);
 }
 #m-panel {
   position:fixed; top:75px; right:15px; width:210px;
-  background:rgba(10,10,15,0.95); border:1px solid #00eaff;
+  background:rgba(15,10,0,0.96); border:1px solid #ffd700;
   border-radius:18px; display:none; z-index:1000006; overflow:hidden;
-  box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.9);
 }
 .m-opt { 
   color:#fff; padding:15px; font-size:13px; font-weight:700; 
-  cursor:pointer; border-bottom:1px solid #222; transition: 0.3s; 
+  cursor:pointer; border-bottom:1px solid #333; transition: 0.3s; 
 }
-.m-opt:active { background:rgba(0,234,255,0.2); }
-.m-opt.active { color:#00eaff; background:rgba(0,234,255,0.1); }
+.m-opt:active { background:rgba(255,215,0,0.2); }
+.m-opt.active { color:#ffd700; background:rgba(255,215,0,0.1); }
 
-/* Nút quay lại */
 #back-btn {
   position:fixed; top:15px; left:15px; width:48px; height:48px;
-  background:rgba(0,234,255,0.18); border:1.5px solid #00eaff;
+  background:rgba(255,255,255,0.1); border:1.5px solid #fff;
   border-radius:14px; display:flex; justify-content:center; align-items:center;
-  z-index:1000005; cursor:pointer; color:#00eaff; font-size:22px; 
-  backdrop-filter:blur(12px); box-shadow:0 4px 15px rgba(0,234,255,0.25);
+  z-index:1000005; cursor:pointer; color:#fff; font-size:22px; 
+  backdrop-filter:blur(12px);
 }
 
 /* Tool chính */
 #tool-root {
   position:fixed; left:50%; top:20%; transform:translate(-50%, -50%) scale(1);
-  width:320px; height:158px; border-radius:68px;
+  width:330px; height:160px; border-radius:80px;
   display:flex; align-items:center; justify-content:space-between;
-  padding:0 22px; z-index:1000000; touch-action:none;
-  background:rgba(15,15,22,0.88); backdrop-filter:blur(25px);
-  border:1.8px solid rgba(0,234,255,0.45);
-  box-shadow:0 25px 60px rgba(0,0,0,0.85); 
-  user-select:none;
+  padding:0 25px; z-index:1000000; touch-action:none;
+  background:rgba(10,10,10,0.85); backdrop-filter:blur(30px);
+  border:2px solid rgba(255,215,0,0.5);
+  box-shadow:0 25px 80px rgba(0,0,0,0.9); 
+  user-select:none; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.led { width:58px; height:58px; border-radius:50%; transition:0.4s; }
+.led { width:62px; height:62px; border-radius:50%; transition:0.4s; }
 .l-t { background:#081808; border:2px solid #00ff8811; }
 .l-x { background:#180808; border:2px solid #ff335511; }
-.on.l-t { background:#00ff88; box-shadow:0 0 50px #00ff88, inset 0 0 15px #fff; transform:scale(1.05); }
-.on.l-x { background:#ff3355; box-shadow:0 0 50px #ff3355, inset 0 0 15px #fff; transform:scale(1.05); }
+.on.l-t { background:#00ff88; box-shadow:0 0 50px #00ff88, inset 0 0 15px #fff; transform:scale(1.08); }
+.on.l-x { background:#ff3355; box-shadow:0 0 50px #ff3355, inset 0 0 15px #fff; transform:scale(1.08); }
 
-.core { flex:1; text-align:center; padding:0 12px; }
+.core { flex:1; text-align:center; padding:0 10px; }
 #label { 
-  font-size:10px; color:#ffd700; font-weight:900; 
-  letter-spacing:1.5px; margin-bottom:4px; text-transform:uppercase; 
+  font-size:11px; color:#ffd700; font-weight:900; 
+  letter-spacing:1.5px; margin-bottom:3px; text-transform:uppercase; 
 }
 #sid { 
-  font-size:14px; font-weight:900; color:#00eaff; 
-  font-family:monospace; letter-spacing:0.5px; 
+  font-size:15px; font-weight:900; color:#fff; 
+  font-family:monospace; opacity:0.8;
 }
 #res { 
-  font-size:34px; font-weight:900; color:#fff; 
-  text-shadow:0 0 15px rgba(255,255,255,0.5); margin:4px 0; 
+  font-size:38px; font-weight:900; color:#fff; 
+  text-shadow:0 0 20px rgba(255,215,0,0.6); margin:2px 0; 
 }
 #stt { 
-  font-size:9.5px; font-weight:800; text-transform:uppercase; 
-  letter-spacing:0.6px; 
+  font-size:10px; font-weight:800; text-transform:uppercase; 
+  letter-spacing:0.5px; line-height:1.2; 
 }
 #extra-info { 
-  font-size:8.5px; color:#aaa; margin-top:3px; line-height:1.3; 
+  font-size:9px; color:#ffd700; margin-top:4px; font-weight:bold;
 }
 #ping-box { 
-  font-size:8px; color:#666; margin-top:5px; font-weight:bold; 
+  font-size:8px; color:#666; margin-top:5px; font-weight:bold;
 }
 </style>
 </head>
 <body>
 
-<iframe id="game-frame" src="https://play.lc79.bet/"></iframe>
+<iframe id="game-frame" src="https://lc79.bet"></iframe>
 
 <div id="m-btn" onclick="toggleMenu()">☰</div>
-<div id="back-btn" onclick="goBackToIndex()">←</div>
+<div id="back-btn" onclick="goBack()">←</div>
 
 <div id="m-panel">
-  <div class="m-opt" id="o-md5" onclick="setMode('md5')">TX MD5 - LIVE</div>
-  <div class="m-opt" id="o-nohu" onclick="setMode('nohu')">TX NỔ HŨ - LIVE</div>
+  <div class="m-opt" id="o-md5" onclick="setMode('md5')">LC79 MD5 - LIVE</div>
+  <div class="m-opt" id="o-nohu" onclick="setMode('nohu')">LC79 NỔ HŨ - LIVE</div>
   <div class="m-opt" onclick="resize(1.1)">PHÓNG TO (+)</div>
   <div class="m-opt" onclick="resize(0.9)">THU NHỎ (-)</div>
   <div class="m-opt" style="color:#ffcc00" onclick="location.reload()">LÀM MỚI TOOL</div>
@@ -103,283 +102,135 @@ html, body {
 <div id="tool-root">
   <div id="led-t" class="led l-t"></div>
   <div class="core">
-    <div id="label">LC79 MASTER AI</div>
-    <div id="sid">#CONNECTING</div>
+    <div id="label">LC79 MASTER • TUANX3000</div>
+    <div id="sid">PHIÊN: #---</div>
     <div id="res">...</div>
-    <div id="stt">ĐANG KHỞI TẠO AI</div>
-    <div id="extra-info">Streak: -- | Entropy: --</div>
-    <div id="ping-box">Ping: --ms | TuanX5000 v5.1</div>
+    <div id="stt">ĐANG PHÂN TÍCH...</div>
+    <div id="extra-info">RATE: -- | WIN: --</div>
+    <div id="ping-box">Ping: --ms | Core V10.3 PRO</div>
   </div>
   <div id="led-x" class="led l-x"></div>
 </div>
 
 <script>
-// ================== BẢO MẬT USER ==================
+// ================== CẤU HÌNH API ==================
+const API_URL = "https://apimax789-production.up.railway.app/api/all";
 const urlParams = new URLSearchParams(window.location.search);
 const currentUser = urlParams.get('u') || localStorage.getItem('tuanx3000_user');
 
-if (!currentUser || currentUser === "null") {
-    window.location.replace("index.html");
-}
+let currentMode = localStorage.getItem('lc79_mode') || 'nohu'; 
+let currentScale = parseFloat(localStorage.getItem('lc79_scale')) || 1.0;
+let abortCtrl = null;
 
-function goBackToIndex() {
+function goBack() {
     window.location.href = `main.html?u=${encodeURIComponent(currentUser)}`;
 }
 
-// ================== CẤU HÌNH ==================
-const API_BASE = "https://ancient-poetry-7f56.lot896613.workers.dev/?mode=";
-let currentMode = localStorage.getItem('tuan_mmo_mode') || 'md5'; 
-let currentScale = parseFloat(localStorage.getItem('tuan_mmo_scale')) || 1.0;
-let abortCtrl = null;
-
-// ================== TUANX5000 v5.1 - THUẬT TOÁN CAO CẤP ==================
-function runMasterAI(list) {
-  if (!list || list.length < 20) {
-    return { result: "TÀI", confidence: 51, streak: "0T", entropy: "0.50" };
-  }
-
-  // Parse kết quả linh hoạt
-  const historyArr = list.slice(0, 400).map(item => {
-    let val = item.resultTruyenThong || item.result || item.BetSide || item.betSide ||
-              item.diceSum || item.SessionResult || item.resultTX || item.side || 
-              item.outcome || "";
-
-    if (typeof val === 'number') {
-      return (val >= 11 || val === 1) ? "T" : "X";
-    }
-    const s = String(val).toUpperCase().trim();
-    return (s.includes("TÀI") || s.includes("TAI") || s === "T" || 
-            s.includes("BIG") || s === "1") ? "T" : "X";
-  });
-
-  const history = historyArr.join("");
-  const len = history.length;
-  if (len < 20) return { result: "TÀI", confidence: 51, streak: "0T", entropy: "0.50" };
-
-  let tScore = 0, xScore = 0;
-
-  // 1. Multi-scale Pattern + Recency
-  const scales = [
-    { size: 30,  weight: 1.00, decay: 0.96 },
-    { size: 80,  weight: 0.78, decay: 0.97 },
-    { size: 150, weight: 0.55, decay: 0.98 },
-    { size: 300, weight: 0.32, decay: 0.985 }
-  ];
-
-  scales.forEach(({size, weight, decay}) => {
-    const w = Math.min(size, len);
-    if (w < 12) return;
-    const recent = history.substring(0, w);
-    const baseFactor = weight;
-
-    for (let i = 1; i < w - 8; i++) {
-      const rf = baseFactor * Math.pow(decay, i * 0.85);
-
-      if (recent.substring(i, i+3) === recent.substring(0,3)) {
-        (recent[i-1] === "T") ? tScore += rf : xScore += rf * 1.08;
-      }
-      if (recent.substring(i, i+4) === recent.substring(0,4)) {
-        (recent[i-1] === "T") ? tScore += rf * 1.55 : xScore += rf * 1.65;
-      }
-      if (recent.substring(i, i+5) === recent.substring(0,5)) {
-        (recent[i-1] === "T") ? tScore += rf * 1.95 : xScore += rf * 2.10;
-      }
-    }
-  });
-
-  // 2. Markov Chain & Streak Analysis
-  let tt = 0, tx = 0, xt = 0, xx = 0;
-  let streakT = 0, streakX = 0, maxStreak = 1;
-  let currentStreakChar = history[0];
-
-  for (let i = 1; i < len; i++) {
-    if (history[i] === "T") {
-      if (history[i-1] === "T") { tt++; streakT++; streakX = 0; }
-      else { xt++; streakT = 1; streakX = 0; }
-      if (streakT > maxStreak) { maxStreak = streakT; currentStreakChar = "T"; }
-    } else {
-      if (history[i-1] === "X") { xx++; streakX++; streakT = 0; }
-      else { tx++; streakX = 1; streakT = 0; }
-      if (streakX > maxStreak) { maxStreak = streakX; currentStreakChar = "X"; }
-    }
-  }
-
-  const pTafterT = tt / (tt + tx + 0.001);
-  const overallPT = (tt + xt) / (len - 1 + 0.001);
-
-  // 3. Entropy
-  let changes = 0;
-  for (let i = 1; i < len; i++) {
-    if (history[i] !== history[i-1]) changes++;
-  }
-  const entropy = changes / (len - 1);
-
-  // 4. Decision Logic
-  let final = (tScore > xScore) ? "TÀI" : "XỈU";
-
-  if (maxStreak >= 7) {
-    final = currentStreakChar === "T" ? "TÀI" : "XỈU";
-  } else if (maxStreak >= 5) {
-    if ((currentStreakChar === "T" && pTafterT > 0.60) || 
-        (currentStreakChar === "X" && (1 - overallPT) > 0.60)) {
-      final = currentStreakChar === "T" ? "TÀI" : "XỈU";
-    }
-  }
-
-  if (pTafterT > 0.68 && overallPT > 0.52) final = "TÀI";
-  if ((1 - overallPT) > 0.68) final = "XỈU";
-
-  if (entropy > 0.47 && entropy < 0.54 && Math.abs(tScore - xScore) < 5) {
-    final = Math.random() > 0.48 ? "TÀI" : "XỈU";
-  }
-
-  // 5. Confidence
-  let diff = Math.abs(tScore - xScore);
-  let conf = 52 + Math.floor(diff * 6.8);
-
-  if (maxStreak >= 6) conf += 19;
-  else if (maxStreak >= 5) conf += 13;
-  else if (maxStreak >= 4) conf += 7;
-
-  if (Math.max(pTafterT, 1 - overallPT) > 0.67) conf += 12;
-
-  if (entropy > 0.51) conf = Math.max(52, conf - 13);
-  if (len > 150 && diff < 6) conf = Math.max(52, conf - 17);
-
-  let percent = Math.max(52, Math.min(92, Math.round(conf)));
-
-  if (percent > 82) {
-    if (final === "TÀI" && pTafterT < 0.53) percent -= 10;
-    if (final === "XỈU" && overallPT > 0.54) percent -= 10;
-  }
-
-  return { 
-    result: final, 
-    confidence: percent,
-    streak: maxStreak + currentStreakChar,
-    entropy: entropy.toFixed(2)
-  };
-}
-
-// ================== REFRESH DATA ==================
+// ================== CẬP NHẬT DỮ LIỆU ==================
 async function refreshData() {
   if (abortCtrl) abortCtrl.abort();
   abortCtrl = new AbortController();
   
   const startTime = Date.now();
   try {
-    const res = await fetch(API_BASE + currentMode, { signal: abortCtrl.signal });
+    const res = await fetch(API_URL, { signal: abortCtrl.signal, cache: "no-store" });
     const json = await res.json();
     
-    const historyList = json.list || json.data?.list || json.data?.sessions || 
-                       (Array.isArray(json) ? json : []);
+    // Truy cập theo cấu trúc: json.data.nohu hoặc json.data.md5
+    const modeData = json.data[currentMode];
 
-    if (historyList && historyList.length > 0) {
-      const latest = historyList[0];
-      let rawId = String(latest.id || latest.sessionId || latest.SessionId || "0000");
-      
-      let nextId = rawId;
-      let match = rawId.match(/\d+/);
-      if (match) {
-        nextId = rawId.replace(match[0], (BigInt(match[0]) + 1n).toString());
-      }
-
-      const prediction = runMasterAI(historyList);
-      const ping = Date.now() - startTime;
-
-      renderUI(nextId, prediction);
+    if (modeData) {
+      renderUI(modeData, Date.now() - startTime);
     }
   } catch (err) {
     if (err.name !== 'AbortError') {
-      console.log("Proxy reconnecting...");
+      console.log("Reconnecting...");
+      document.getElementById("stt").innerText = "MẤT KẾT NỐI SERVER";
+      document.getElementById("stt").style.color = "#ff3355";
     }
   }
 }
 
-// ================== RENDER UI ==================
-function renderUI(sessionId, pred) {
-  document.getElementById("sid").innerText = `#${sessionId}`;
-  document.getElementById("res").innerText = pred.result;
+function renderUI(data, ping) {
+  // 1. Cập nhật Phiên và Kết quả
+  document.getElementById("sid").innerText = `PHIÊN: #${data.phien_tiep}`;
+  const ketQua = data.du_doan.toUpperCase();
+  document.getElementById("res").innerText = ketQua;
 
-  // LED
-  document.getElementById("led-t").classList.toggle("on", pred.result === "TÀI");
-  document.getElementById("led-x").classList.toggle("on", pred.result === "XỈU");
+  // 2. Hệ thống đèn LED
+  const isTai = ketQua.includes("TÀI");
+  const isXiu = ketQua.includes("XỈU");
+  document.getElementById("led-t").classList.toggle("on", isTai);
+  document.getElementById("led-x").classList.toggle("on", isXiu);
 
-  // Status
-  const sttEl = document.getElementById("stt");
-  if (pred.confidence > 82) {
-    sttEl.style.color = "#00ff88";
-    sttEl.innerText = "TỶ LỆ THẮNG CAO";
-  } else if (pred.confidence > 68) {
-    sttEl.style.color = "#ffd700";
-    sttEl.innerText = "KÈO THƠM";
-  } else {
-    sttEl.style.color = "#ffaa00";
-    sttEl.innerText = "CẨN THẬN";
-  }
+  // 3. Phân tích Logic & Độ tin cậy
+  const stt = document.getElementById("stt");
+  stt.innerText = data.phan_tich || `ĐỘ TIN CẬY: ${data.tin_cay}`;
+  
+  // Đổi màu theo logic phân tích
+  if (data.phan_tich.includes("BỆT")) stt.style.color = "#00ff88"; 
+  else if (data.phan_tich.includes("VOTE")) stt.style.color = "#00eaff";
+  else stt.style.color = "#ffd700";
 
-  // Extra Info
-  document.getElementById("extra-info").innerText = 
-    `Streak: ${pred.streak} | Entropy: ${pred.entropy}`;
-
-  document.getElementById("ping-box").innerText = 
-    `Ping: ${Math.round(Date.now() - performance.now() % 1000)}ms | TuanX5000 v5.1`;
+  // 4. Thống kê tỉ lệ
+  document.getElementById("extra-info").innerText = `RATE: ${data.stats.rate} | WIN: ${data.stats.win}`;
+  document.getElementById("ping-box").innerText = `Ping: ${ping}ms | TUANX3000 PRO`;
 }
 
-// ================== MODE & CONTROLS ==================
+// ================== ĐIỀU KHIỂN ==================
 function setMode(m) {
   currentMode = m;
-  localStorage.setItem('tuan_mmo_mode', m);
-  
+  localStorage.setItem('lc79_mode', m);
   document.getElementById("o-md5").classList.toggle("active", m === 'md5');
   document.getElementById("o-nohu").classList.toggle("active", m === 'nohu');
-  
-  document.getElementById("label").innerText = m === 'md5' ? 'LC79 MD5 ACTIVE' : 'LC79 NỔ HŨ ACTIVE';
-  
-  toggleMenu();
+  document.getElementById("label").innerText = `LC79 ${m.toUpperCase()} PRO`;
+  if (document.getElementById("m-panel").style.display === "block") toggleMenu();
   refreshData();
 }
 
 function toggleMenu() {
   const p = document.getElementById("m-panel");
-  p.style.display = (p.style.display === "block") ? "none" : "block";
+  p.style.display = p.style.display === "block" ? "none" : "block";
 }
 
 function resize(f) {
   currentScale = Math.max(0.6, Math.min(1.5, currentScale * f));
-  localStorage.setItem('tuan_mmo_scale', currentScale);
+  localStorage.setItem('lc79_scale', currentScale);
   document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 }
 
-// Drag & Touch Support
+// Logic kéo thả mượt mà
 const el = document.getElementById("tool-root");
 let isDrag = false, offset = [0, 0];
 
-const startDrag = (e) => {
+const start = (e) => {
   isDrag = true;
   el.style.transition = 'none';
   const c = e.touches ? e.touches[0] : e;
   offset = [c.clientX - el.offsetLeft, c.clientY - el.offsetTop];
 };
-
-const moveDrag = (e) => {
+const move = (e) => {
   if (!isDrag) return;
   const c = e.touches ? e.touches[0] : e;
   el.style.left = (c.clientX - offset[0]) + 'px';
   el.style.top = (c.clientY - offset[1]) + 'px';
 };
+const end = () => {
+  isDrag = false;
+  el.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+};
 
-el.addEventListener('mousedown', startDrag);
-el.addEventListener('touchstart', startDrag, {passive: false});
-window.addEventListener('mousemove', moveDrag);
-window.addEventListener('touchmove', moveDrag, {passive: false});
-window.addEventListener('mouseup', () => { isDrag = false; el.style.transition = 'transform 0.3s'; });
-window.addEventListener('touchend', () => isDrag = false);
+el.addEventListener('mousedown', start);
+el.addEventListener('touchstart', start, {passive: false});
+window.addEventListener('mousemove', move);
+window.addEventListener('touchmove', move, {passive: false});
+window.addEventListener('mouseup', end);
+window.addEventListener('touchend', end);
 
-// ================== KHỞI CHẠY ==================
+// KHỞI CHẠY
 document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 setMode(currentMode);
-setInterval(refreshData, 3500);
+setInterval(refreshData, 3500); 
 refreshData();
 </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>MAX789 MASTER TOOL • ANH TUẤN MMO</title>
+<title>MAX789 MASTER PRO • TUANX3000</title>
 <style>
 html, body { 
   margin:0; padding:0; width:100%; height:100%; overflow:hidden; 
@@ -13,7 +13,7 @@ html, body {
   position:absolute; inset:0; width:100%; height:100%; border:0; z-index:1; 
 }
 
-/* Nút menu */
+/* Menu điều khiển */
 #m-btn {
   position:fixed; top:15px; right:15px; width:48px; height:48px;
   background:rgba(0,255,255,0.2); border:1.5px solid #00eaff;
@@ -34,7 +34,6 @@ html, body {
 .m-opt:active { background:rgba(0,234,255,0.2); }
 .m-opt.active { color:#00eaff; background:rgba(0,234,255,0.1); }
 
-/* Nút quay lại */
 #back-btn {
   position:fixed; top:15px; left:15px; width:48px; height:48px;
   background:rgba(0,234,255,0.18); border:1.5px solid #00eaff;
@@ -43,7 +42,7 @@ html, body {
   backdrop-filter:blur(12px); box-shadow:0 4px 15px rgba(0,234,255,0.25);
 }
 
-/* Tool Root */
+/* Tool chính */
 #tool-root {
   position:fixed; left:50%; top:20%; transform:translate(-50%, -50%) scale(1);
   width:320px; height:158px; border-radius:68px;
@@ -52,7 +51,7 @@ html, body {
   background:rgba(15,15,22,0.88); backdrop-filter:blur(25px);
   border:1.8px solid rgba(0,234,255,0.45);
   box-shadow:0 25px 60px rgba(0,0,0,0.85); 
-  user-select:none;
+  user-select:none; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .led { width:58px; height:58px; border-radius:50%; transition:0.4s; }
 .l-t { background:#081808; border:2px solid #00ff8811; }
@@ -90,7 +89,7 @@ html, body {
 <iframe id="game-frame" src="https://play.max789.vin/"></iframe>
 
 <div id="m-btn" onclick="toggleMenu()">☰</div>
-<div id="back-btn" onclick="goBackToIndex()">←</div>
+<div id="back-btn" onclick="goBack()">←</div>
 
 <div id="m-panel">
   <div class="m-opt" id="o-md5" onclick="setMode('md5')">TX MD5 - LIVE</div>
@@ -107,235 +106,92 @@ html, body {
     <div id="sid">#CONNECTING</div>
     <div id="res">...</div>
     <div id="stt">ĐANG KHỞI TẠO AI</div>
-    <div id="extra-info">Streak: -- | Entropy: --</div>
-    <div id="ping-box">Ping: --ms | TuanX5000 v5.1</div>
+    <div id="extra-info">Rate: -- | Status: --</div>
+    <div id="ping-box">Ping: --ms | TuanX3000 v10.3</div>
   </div>
   <div id="led-x" class="led l-x"></div>
 </div>
 
 <script>
-// ================== BẢO MẬT USER ==================
 const urlParams = new URLSearchParams(window.location.search);
 const currentUser = urlParams.get('u') || localStorage.getItem('tuanx3000_user');
 
 if (!currentUser || currentUser === "null") {
-    window.location.replace("index.html");
+    // Nếu dùng trực tiếp có thể bỏ qua redirect này
+    // window.location.replace("index.html"); 
 }
 
-function goBackToIndex() {
+function goBack() {
     window.location.href = `main.html?u=${encodeURIComponent(currentUser)}`;
 }
 
-// ================== CẤU HÌNH ==================
-const API_BASE = "https://proxymax789.lot896613.workers.dev/?mode=";
+// CẤU HÌNH API MỚI CỦA BẠN
+const API_URL = "https://apimax789-production.up.railway.app/api/all";
 let currentMode = localStorage.getItem('tuanx3000_mode') || 'nohu'; 
 let currentScale = parseFloat(localStorage.getItem('tuanx3000_scale')) || 1.0;
 let abortCtrl = null;
 
-// ================== TUANX5000 v5.1 - THUẬT TOÁN CAO CẤP ==================
-function runMasterAI(list) {
-  if (!list || list.length < 20) {
-    return { result: "TÀI", confidence: 51, streak: "0T", entropy: "0.50" };
-  }
-
-  // Parse kết quả linh hoạt cho MAX789
-  const historyArr = list.slice(0, 400).map(item => {
-    let val = item.resultTruyenThong || item.result || item.BetSide || item.betSide ||
-              item.diceSum || item.SessionResult || item.resultTX || "";
-    
-    if (typeof val === 'number') {
-      return (val >= 11 || val === 1) ? "T" : "X";
-    }
-    const s = String(val).toUpperCase().trim();
-    return (s.includes("TÀI") || s.includes("TAI") || s === "T" || 
-            s.includes("BIG") || s === "1") ? "T" : "X";
-  });
-
-  const history = historyArr.join("");
-  const len = history.length;
-  if (len < 20) return { result: "TÀI", confidence: 51, streak: "0T", entropy: "0.50" };
-
-  let tScore = 0, xScore = 0;
-
-  // 1. Multi-scale Pattern + Recency Weight
-  const scales = [
-    { size: 30,  weight: 1.00, decay: 0.96 },
-    { size: 80,  weight: 0.78, decay: 0.97 },
-    { size: 150, weight: 0.55, decay: 0.98 },
-    { size: 300, weight: 0.32, decay: 0.985 }
-  ];
-
-  scales.forEach(({size, weight, decay}) => {
-    const w = Math.min(size, len);
-    if (w < 12) return;
-    const recent = history.substring(0, w);
-    const baseFactor = weight;
-
-    for (let i = 1; i < w - 8; i++) {
-      const rf = baseFactor * Math.pow(decay, i * 0.85);
-
-      if (recent.substring(i, i+3) === recent.substring(0,3)) {
-        (recent[i-1] === "T") ? tScore += rf : xScore += rf * 1.08;
-      }
-      if (recent.substring(i, i+4) === recent.substring(0,4)) {
-        (recent[i-1] === "T") ? tScore += rf * 1.55 : xScore += rf * 1.65;
-      }
-      if (recent.substring(i, i+5) === recent.substring(0,5)) {
-        (recent[i-1] === "T") ? tScore += rf * 1.95 : xScore += rf * 2.10;
-      }
-    }
-  });
-
-  // 2. Markov Chain & Streak
-  let tt = 0, tx = 0, xt = 0, xx = 0;
-  let streakT = 0, streakX = 0, maxStreak = 1;
-  let currentStreakChar = history[0];
-
-  for (let i = 1; i < len; i++) {
-    if (history[i] === "T") {
-      if (history[i-1] === "T") { tt++; streakT++; streakX = 0; }
-      else { xt++; streakT = 1; streakX = 0; }
-      if (streakT > maxStreak) { maxStreak = streakT; currentStreakChar = "T"; }
-    } else {
-      if (history[i-1] === "X") { xx++; streakX++; streakT = 0; }
-      else { tx++; streakX = 1; streakT = 0; }
-      if (streakX > maxStreak) { maxStreak = streakX; currentStreakChar = "X"; }
-    }
-  }
-
-  const pTafterT = tt / (tt + tx + 0.001);
-  const overallPT = (tt + xt) / (len - 1 + 0.001);
-
-  // 3. Entropy
-  let changes = 0;
-  for (let i = 1; i < len; i++) {
-    if (history[i] !== history[i-1]) changes++;
-  }
-  const entropy = changes / (len - 1);
-
-  // 4. Decision
-  let final = (tScore > xScore) ? "TÀI" : "XỈU";
-
-  if (maxStreak >= 7) {
-    final = currentStreakChar === "T" ? "TÀI" : "XỈU";
-  } else if (maxStreak >= 5) {
-    if ((currentStreakChar === "T" && pTafterT > 0.60) || 
-        (currentStreakChar === "X" && (1 - overallPT) > 0.60)) {
-      final = currentStreakChar === "T" ? "TÀI" : "XỈU";
-    }
-  }
-
-  if (pTafterT > 0.68 && overallPT > 0.52) final = "TÀI";
-  if ((1 - overallPT) > 0.68) final = "XỈU";
-
-  if (entropy > 0.47 && entropy < 0.54 && Math.abs(tScore - xScore) < 5) {
-    final = Math.random() > 0.48 ? "TÀI" : "XỈU";
-  }
-
-  // 5. Confidence
-  let diff = Math.abs(tScore - xScore);
-  let conf = 52 + Math.floor(diff * 6.8);
-
-  if (maxStreak >= 6) conf += 19;
-  else if (maxStreak >= 5) conf += 13;
-  else if (maxStreak >= 4) conf += 7;
-
-  if (Math.max(pTafterT, 1 - overallPT) > 0.67) conf += 12;
-
-  if (entropy > 0.51) conf = Math.max(52, conf - 13);
-  if (len > 150 && diff < 6) conf = Math.max(52, conf - 17);
-
-  let percent = Math.max(52, Math.min(92, Math.round(conf)));
-
-  if (percent > 82) {
-    if (final === "TÀI" && pTafterT < 0.53) percent -= 10;
-    if (final === "XỈU" && overallPT > 0.54) percent -= 10;
-  }
-
-  return { 
-    result: final, 
-    confidence: percent,
-    streak: maxStreak + currentStreakChar,
-    entropy: entropy.toFixed(2)
-  };
-}
-
-// ================== REFRESH DATA ==================
+// ================== CẬP NHẬT DỮ LIỆU TỪ API RAILWAY ==================
 async function refreshData() {
   if (abortCtrl) abortCtrl.abort();
   abortCtrl = new AbortController();
   
   const startTime = Date.now();
   try {
-    const res = await fetch(API_BASE + currentMode, { signal: abortCtrl.signal });
-    const json = await res.json();
+    const response = await fetch(API_URL, { signal: abortCtrl.signal });
+    const json = await response.json();
     
-    const historyList = json.Data || json.list || json.data || [];
+    // Truy cập theo cấu trúc: json.data.nohu hoặc json.data.md5
+    const modeData = json.data[currentMode];
 
-    if (historyList && historyList.length > 0) {
-      const latest = historyList[0];
-      let currentId = BigInt(latest.SessionId || latest.id || latest.sessionId || 0);
-      let nextId = (currentId + 1n).toString();
-
-      const prediction = runMasterAI(historyList);
-      const ping = Date.now() - startTime;
-
-      renderUI(nextId, prediction);
+    if (modeData) {
+      renderUI(modeData, Date.now() - startTime);
     }
-  } catch (err) {
-    if (err.name !== 'AbortError') {
-      console.log("Proxy reconnecting...");
+  } catch (e) {
+    if (e.name !== 'AbortError') {
+      console.log("Kết nối lại...");
+      document.getElementById("stt").innerText = "RECONNECTING...";
     }
   }
 }
 
-// ================== RENDER UI ==================
-function renderUI(sessionId, pred) {
-  document.getElementById("sid").innerText = `#${sessionId}`;
-  document.getElementById("res").innerText = pred.result;
+function renderUI(data, ping) {
+  // 1. Cập nhật Session và Kết quả dự đoán
+  document.getElementById("sid").innerText = `#${data.phien_tiep}`;
+  document.getElementById("res").innerText = data.du_doan.toUpperCase();
 
-  // LED
-  document.getElementById("led-t").classList.toggle("on", pred.result === "TÀI");
-  document.getElementById("led-x").classList.toggle("on", pred.result === "XỈU");
+  // 2. Điều khiển đèn LED
+  const isTai = data.du_doan.toUpperCase().includes("TÀI");
+  const isXiu = data.du_doan.toUpperCase().includes("XỈU");
+  
+  document.getElementById("led-t").classList.toggle("on", isTai);
+  document.getElementById("led-x").classList.toggle("on", isXiu);
 
-  // Status Text
-  const sttEl = document.getElementById("stt");
-  if (pred.confidence > 82) {
-    sttEl.style.color = "#00ff88";
-    sttEl.innerText = "TỶ LỆ THẮNG CAO";
-  } else if (pred.confidence > 68) {
-    sttEl.style.color = "#ffd700";
-    sttEl.innerText = "KÈO THƠM";
-  } else {
-    sttEl.style.color = "#ffaa00";
-    sttEl.innerText = "CẨN THẬN";
-  }
+  // 3. Trạng thái và Độ tin cậy
+  const stt = document.getElementById("stt");
+  const confidence = parseInt(data.tin_cay);
+  stt.innerText = `ĐỘ TIN CẬY: ${data.tin_cay}`;
+  stt.style.color = confidence >= 80 ? "#00ff88" : "#ffd700";
 
-  // Extra Info
-  document.getElementById("extra-info").innerText = 
-    `Streak: ${pred.streak} | Entropy: ${pred.entropy}`;
-
-  document.getElementById("ping-box").innerText = 
-    `Ping: ${Date.now() % 999 + 30}ms | TuanX5000 v5.1`;
+  // 4. Thông tin bổ sung
+  document.getElementById("extra-info").innerText = `Rate: ${data.stats.rate} | Win: ${data.stats.win}`;
+  document.getElementById("ping-box").innerText = `Ping: ${ping}ms | TuanX3000 PRO`;
 }
 
-// ================== MODE & CONTROLS ==================
+// ================== ĐIỀU KHIỂN GIAO DIỆN ==================
 function setMode(m) {
   currentMode = m;
   localStorage.setItem('tuanx3000_mode', m);
-  
   document.getElementById("o-md5").classList.toggle("active", m === 'md5');
   document.getElementById("o-nohu").classList.toggle("active", m === 'nohu');
-  
-  document.getElementById("label").innerText = m === 'md5' ? 'MAX789 MD5 ACTIVE' : 'MAX789 NỔ HŨ ACTIVE';
-  
-  toggleMenu();
+  document.getElementById("label").innerText = `MAX789 ${m.toUpperCase()} PRO`;
+  if (document.getElementById("m-panel").style.display === "block") toggleMenu();
   refreshData();
 }
 
 function toggleMenu() {
   const p = document.getElementById("m-panel");
-  p.style.display = (p.style.display === "block") ? "none" : "block";
+  p.style.display = p.style.display === "block" ? "none" : "block";
 }
 
 function resize(f) {
@@ -344,38 +200,38 @@ function resize(f) {
   document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 }
 
-// Drag & Touch
+// LOGIC KÉO THẢ (DRAG & DROP)
 const el = document.getElementById("tool-root");
 let isDrag = false, offset = [0, 0];
 
-const startDrag = (e) => {
+const start = (e) => {
   isDrag = true;
   el.style.transition = 'none';
   const c = e.touches ? e.touches[0] : e;
   offset = [c.clientX - el.offsetLeft, c.clientY - el.offsetTop];
 };
-
-const moveDrag = (e) => {
+const move = (e) => {
   if (!isDrag) return;
   const c = e.touches ? e.touches[0] : e;
   el.style.left = (c.clientX - offset[0]) + 'px';
   el.style.top = (c.clientY - offset[1]) + 'px';
 };
+const end = () => {
+  isDrag = false;
+  el.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+};
 
-el.addEventListener('mousedown', startDrag);
-el.addEventListener('touchstart', startDrag, {passive: false});
-window.addEventListener('mousemove', moveDrag);
-window.addEventListener('touchmove', moveDrag, {passive: false});
-window.addEventListener('mouseup', () => { 
-  isDrag = false; 
-  el.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
-});
-window.addEventListener('touchend', () => isDrag = false);
+el.addEventListener('mousedown', start);
+el.addEventListener('touchstart', start, {passive: false});
+window.addEventListener('mousemove', move);
+window.addEventListener('touchmove', move, {passive: false});
+window.addEventListener('mouseup', end);
+window.addEventListener('touchend', end);
 
-// ================== INIT ==================
+// KHỞI TẠO BAN ĐẦU
 document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 setMode(currentMode);
-setInterval(refreshData, 3500);
+setInterval(refreshData, 3000); // Cập nhật mỗi 3 giây
 refreshData();
 </script>
 </body>
