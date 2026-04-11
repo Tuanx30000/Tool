@@ -5,148 +5,251 @@
 <title>Thanh toán - TUANX3000</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
+    :root {
+        --primary: #00ff41; /* Màu xanh hacker */
+        --secondary: #ffd700; /* Màu vàng kim loại */
+        --bg: #0a0a12;
+        --card-bg: #16213e;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
-        font-family: Arial, sans-serif;
-        background: linear-gradient(180deg, #0a0a12, #1a1a2e);
-        color: #00ff41;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%);
+        color: #e0e0e0;
         text-align: center;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
-        padding: 15px;
+        padding: 20px;
     }
+
     .container {
         width: 100%;
-        max-width: 420px;
+        max-width: 450px;
+        animation: fadeIn 0.8s ease-out;
     }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-box { margin-bottom: 25px; }
+    
     h1 {
-        color: #ffd700;
-        margin-bottom: 10px;
-        font-size: 24px;
-        text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+        color: var(--secondary);
+        font-size: 26px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
     }
+
+    .subtitle {
+        color: var(--primary);
+        font-size: 14px;
+        margin-top: 5px;
+        opacity: 0.8;
+    }
+
     .card {
-        background: #16213e;
+        background: var(--card-bg);
         padding: 25px 20px;
-        border-radius: 20px;
-        border: 2px solid #00ff41;
-        box-shadow: 0 10px 40px rgba(0, 255, 65, 0.2);
+        border-radius: 24px;
+        border: 1px solid rgba(0, 255, 65, 0.3);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
         margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
     }
+
+    /* Hiệu ứng quét QR */
     .qr-container {
-        margin: 20px 0;
-        padding: 15px;
+        margin: 15px 0;
+        padding: 10px;
         background: white;
-        border-radius: 15px;
+        border-radius: 18px;
         display: inline-block;
+        position: relative;
     }
+
     #qr {
-        width: 300px;
-        height: 300px;
-        border: 6px solid #00ff41;
-        border-radius: 12px;
-    }
-    .amount {
-        color: #00ff88;
-        font-size: 32px;
-        font-weight: bold;
-        margin: 15px 0 8px;
-    }
-    .username {
-        color: #ffff00;
-        font-size: 18px;
-        font-weight: bold;
-    }
-    .info {
-        background: #0f1b33;
-        padding: 14px;
+        width: 280px;
+        height: 280px;
+        display: block;
         border-radius: 10px;
-        margin: 12px 0;
-        text-align: left;
-        font-size: 15px;
-        border-left: 4px solid #00ff41;
     }
-    .copy {
-        float: right;
-        background: #00ff41;
-        color: #000;
-        border: none;
-        padding: 6px 14px;
+
+    .qr-container::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: var(--primary);
+        box-shadow: 0 0 15px var(--primary);
+        animation: scan 3s linear infinite;
+    }
+
+    @keyframes scan {
+        0% { top: 5%; }
+        50% { top: 95%; }
+        100% { top: 5%; }
+    }
+
+    .amount-box {
+        margin-top: 15px;
+    }
+
+    .amount {
+        color: var(--primary);
+        font-size: 36px;
+        font-weight: 900;
+        text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    }
+
+    .username-tag {
+        display: inline-block;
+        background: rgba(255, 255, 0, 0.1);
+        color: #ffff00;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        margin-top: 5px;
+        border: 1px border solid #ffff00;
+    }
+
+    .info-list {
+        text-align: left;
+        background: rgba(15, 27, 51, 0.8);
+        border-radius: 15px;
+        padding: 5px;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .info-item:last-child { border-bottom: none; }
+
+    .label { font-size: 13px; color: #888; }
+    .val { font-weight: bold; color: #fff; font-size: 15px; }
+    .val.highlight { color: var(--secondary); }
+
+    .copy-btn {
+        background: rgba(0, 255, 65, 0.15);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        padding: 4px 10px;
         border-radius: 6px;
-        font-weight: bold;
+        font-size: 11px;
         cursor: pointer;
-        font-size: 13px;
         transition: 0.2s;
     }
-    .copy:active { transform: scale(0.9); }
-    
-    /* STYLE CHO NÚT ĐÃ THANH TOÁN VÀ QUAY LẠI */
-    .action-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+
+    .copy-btn:hover { background: var(--primary); color: #000; }
+
+    .action-buttons { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+
     .btn-paid {
-        background: linear-gradient(90deg, #008000, #00ff41);
-        color: #000; padding: 16px; border: none; border-radius: 12px;
-        font-weight: bold; font-size: 18px; cursor: pointer; text-transform: uppercase;
-        box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3); transition: 0.3s;
+        background: linear-gradient(45deg, #008000, #00ff41);
+        color: #000;
+        padding: 18px;
+        border: none;
+        border-radius: 15px;
+        font-weight: 800;
+        font-size: 18px;
+        cursor: pointer;
+        text-transform: uppercase;
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+        transition: 0.3s;
     }
-    .btn-paid:active { transform: translateY(2px); }
-    
+
+    .btn-paid:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(0, 255, 65, 0.6); }
+
     .btn-back {
-        background: #333; color: #fff; padding: 14px; border: none; border-radius: 12px;
-        font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s;
+        background: transparent;
+        color: #888;
+        padding: 10px;
+        border: none;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: underline;
     }
-    
-    .note { color: #888; font-size: 13px; margin-top: 15px; }
+
+    .steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding: 0 10px;
+    }
+
+    .step { font-size: 11px; color: #666; position: relative; }
+    .step.active { color: var(--primary); font-weight: bold; }
 </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>💰 QUÉT MÃ QR NẠP TIỀN</h1>
+    <div class="header-box">
+        <h1>💎 Nạp Tiền Hệ Thống</h1>
+        <p class="subtitle">Tự động - Uy tín - Bảo mật bởi TUANX3000</p>
+    </div>
+
+    <div class="steps">
+        <span class="step">1. Chọn số tiền</span>
+        <span class="step active">2. Quét mã QR</span>
+        <span class="step">3. Hoàn tất</span>
+    </div>
 
     <div class="card">
         <div class="qr-container">
-            <img id="qr" alt="QR Code">
+            <img id="qr" src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=loading" alt="QR Code">
         </div>
-        <div class="amount" id="amountText"></div>
-        <div>Tài khoản: <span class="username" id="usernameText"></span></div>
+        <div class="amount-box">
+            <div class="amount" id="amountText">0 VND</div>
+            <div class="username-tag">👤 Tài khoản: <span id="usernameText">...</span></div>
+        </div>
     </div>
 
     <div class="card">
-        <div class="info">🏦 VietinBank</div>
-        <div class="info">
-            STK: 104886445215
-            <button class="copy" onclick="copy('104886445215')">Copy</button>
-        </div>
-        <div class="info">
-            👤 LO VAN SY
-        </div>
-        <div class="info">
-            💰 <span id="amount2"></span>
-        </div>
-        <div class="info">
-            📝 Nội dung: <span id="noidung" style="color:#ffff00; font-weight:bold;"></span>
-            <button class="copy" onclick="copyContent()">Copy</button>
+        <div class="info-list">
+            <div class="info-item">
+                <div><p class="label">Ngân hàng</p><p class="val">VietinBank</p></div>
+              
+            </div>
+            <div class="info-item">
+                <div><p class="label">Số tài khoản</p><p class="val" id="stkVal">104886445215</p></div>
+                <button class="copy-btn" onclick="copy('104886445215')">SAO CHÉP</button>
+            </div>
+            <div class="info-item">
+                <div><p class="label">Chủ tài khoản</p><p class="val">LO VAN SY</p></div>
+            </div>
+            <div class="info-item">
+                <div><p class="label">Nội dung nạp (Bắt buộc)</p><p class="val highlight" id="noidungText">...</p></div>
+                <button class="copy-btn" onclick="copyContent()">SAO CHÉP</button>
+            </div>
         </div>
         
         <div class="action-buttons">
-            <button id="btn-paid" class="btn-paid" onclick="xacNhanThanhToan()">✅ ĐÃ THANH TOÁN</button>
-            <button class="btn-back" onclick="window.location.href='main.html'">🔙 QUAY LẠI TRANG CHỦ</button>
+            <button id="btn-paid" class="btn-paid" onclick="xacNhanThanhToan()">🚀 XÁC NHẬN ĐÃ CHUYỂN</button>
+            <button class="btn-back" onclick="window.location.href='main.html'">Quay lại trang chủ</button>
         </div>
     </div>
 
-    <div class="note">
-        Quét mã QR bằng ứng dụng ngân hàng. Sau khi chuyển khoản thành công, hãy bấm "ĐÃ THANH TOÁN" để gửi yêu cầu cho Admin.
+    <div style="color: #666; font-size: 12px; line-height: 1.5;">
+        ⚠️ <b>Lưu ý:</b> Vui lòng giữ đúng nội dung chuyển khoản để hệ thống tự động cộng tiền nhanh nhất. Liên hệ <b>@Tuanx3000</b> nếu cần hỗ trợ.
     </div>
 </div>
 
 <script>
-// Lấy link Apps Script để bắn thông báo về Telegram
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcWdVTthI3G7AhFHJLyUX_WhMpOOyxCtzv4KvmQ1GUkzedlpGEf0qQRTQgzt1lygsm2w/exec";
 
-// Lấy dữ liệu từ URL
 const params = new URLSearchParams(window.location.search);
 const amount = params.get("amount") || "0";
 const username = params.get("username") || "khongten";
@@ -156,47 +259,45 @@ const bank = "vietinbank";
 const name = "LO VAN SY";
 const content = `nap ${username}`;
 
-// Tạo QR Code
+// Render UI
 const qrUrl = `https://img.vietqr.io/image/${bank}-${stk}-compact.png?amount=${amount}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(name)}`;
-
 document.getElementById("qr").src = qrUrl;
 document.getElementById("amountText").innerText = Number(amount).toLocaleString('vi-VN') + " VND";
-document.getElementById("amount2").innerText = Number(amount).toLocaleString('vi-VN') + " VND";
 document.getElementById("usernameText").innerText = username;
-document.getElementById("noidung").innerText = content;
+document.getElementById("noidungText").innerText = content;
 
 function copy(text) {
     navigator.clipboard.writeText(text);
-    alert("✅ Đã copy STK!");
+    alert("✅ Đã copy vào bộ nhớ tạm!");
 }
 
 function copyContent() {
     navigator.clipboard.writeText(content);
-    alert("✅ Đã copy nội dung nạp!");
+    alert("✅ Đã copy nội dung chuyển khoản!");
 }
 
-// Xử lý nút ĐÃ THANH TOÁN
 async function xacNhanThanhToan() {
     if (amount === "0") {
-        alert("⚠️ Vui lòng thao tác nạp tiền từ trang chủ!");
-        window.location.href = "main.html";
+        alert("⚠️ Số tiền không hợp lệ!");
         return;
     }
 
     const btn = document.getElementById('btn-paid');
-    btn.innerText = "⏳ ĐANG GỬI YÊU CẦU...";
+    const originalText = btn.innerText;
+    btn.innerText = "⏳ ĐANG XỬ LÝ...";
     btn.disabled = true;
+    btn.style.opacity = "0.7";
 
     try {
         await fetch(SCRIPT_URL, { 
             method: "POST", 
+            mode: 'no-cors',
             body: JSON.stringify({ action: "nap_request", username: username, amount: amount }) 
         });
-        alert("✅ Hệ thống đã ghi nhận! Vui lòng chờ Admin cộng tiền (1-3 phút).");
+        alert("✅ Yêu cầu đã được gửi! Vui lòng chờ 1-3 phút để hệ thống kiểm tra.");
         window.location.href = "index.html";
     } catch (e) {
-        // Fallback nếu mạng lỗi
-        alert("✅ Đã gửi thông báo. Hãy liên hệ Telegram @Tuanx3000 nếu quá 5 phút chưa nhận được tiền.");
+        alert("✅ Đã gửi thông báo. Nếu chưa thấy cộng tiền, hãy nhắn tin Telegram @Tuanx3000.");
         window.location.href = "index.html";
     }
 }
