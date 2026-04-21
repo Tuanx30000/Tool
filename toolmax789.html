@@ -45,7 +45,7 @@ html, body {
 /* Tool chính */
 #tool-root {
   position:fixed; left:50%; top:20%; transform:translate(-50%, -50%) scale(1);
-  width:320px; height:158px; border-radius:68px;
+  width:320px; height:168px; border-radius:68px;
   display:flex; align-items:center; justify-content:space-between;
   padding:0 22px; z-index:1000000; touch-action:none;
   background:rgba(15,15,22,0.88); backdrop-filter:blur(25px);
@@ -106,8 +106,8 @@ html, body {
     <div id="sid">#CONNECTING</div>
     <div id="res">...</div>
     <div id="stt">ĐANG KHỞI TẠO AI</div>
-    <div id="extra-info">Rate: -- | Status: --</div>
-    <div id="ping-box">Ping: --ms | TuanX3000 v10.3</div>
+    <div id="extra-info">Rate: -- | Win: --</div>
+    <div id="ping-box">Ping: --ms | TuanX3000 v11.0</div>
   </div>
   <div id="led-x" class="led l-x"></div>
 </div>
@@ -116,22 +116,17 @@ html, body {
 const urlParams = new URLSearchParams(window.location.search);
 const currentUser = urlParams.get('u') || localStorage.getItem('tuanx3000_user');
 
-if (!currentUser || currentUser === "null") {
-    // Nếu dùng trực tiếp có thể bỏ qua redirect này
-    // window.location.replace("index.html"); 
-}
-
 function goBack() {
     window.location.href = `main.html?u=${encodeURIComponent(currentUser)}`;
 }
 
-// CẤU HÌNH API MỚI CỦA BẠN
-const API_URL = "https://apimax789-production.up.railway.app/api/all";
+// API MỚI (đã khớp link dò soát)
+const API_URL = "https://apimax789-production.up.railway.app/api/dual-engine?provider=railway";
 let currentMode = localStorage.getItem('tuanx3000_mode') || 'nohu'; 
 let currentScale = parseFloat(localStorage.getItem('tuanx3000_scale')) || 1.0;
 let abortCtrl = null;
 
-// ================== CẬP NHẬT DỮ LIỆU TỪ API RAILWAY ==================
+// ================== CẬP NHẬT DỮ LIỆU ==================
 async function refreshData() {
   if (abortCtrl) abortCtrl.abort();
   abortCtrl = new AbortController();
@@ -141,51 +136,60 @@ async function refreshData() {
     const response = await fetch(API_URL, { signal: abortCtrl.signal });
     const json = await response.json();
     
-    // Truy cập theo cấu trúc: json.data.nohu hoặc json.data.md5
-    const modeData = json.data[currentMode];
+    // Cấu trúc mới: json.results
+    const modeKey = currentMode.toUpperCase(); // NOHU hoặc MD5
+    const modeData = json.results[modeKey];
 
     if (modeData) {
-      renderUI(modeData, Date.now() - startTime);
+      renderUI(modeData, json, Date.now() - startTime);
+    } else {
+      document.getElementById("stt").innerText = "MODE KHÔNG TÌM THẤY";
     }
   } catch (e) {
     if (e.name !== 'AbortError') {
       console.log("Kết nối lại...");
-      document.getElementById("stt").innerText = "RECONNECTING...";
+      document.getElementById("stt").innerText = "🔄 RECONNECTING...";
     }
   }
 }
 
-function renderUI(data, ping) {
-  // 1. Cập nhật Session và Kết quả dự đoán
-  document.getElementById("sid").innerText = `#${data.phien_tiep}`;
-  document.getElementById("res").innerText = data.du_doan.toUpperCase();
+function renderUI(data, rootData, ping) {
+  // Session & Kết quả
+  document.getElementById("sid").innerText = `#${data.next_session}`;
+  document.getElementById("res").innerText = data.predict.toUpperCase();
 
-  // 2. Điều khiển đèn LED
-  const isTai = data.du_doan.toUpperCase().includes("TÀI");
-  const isXiu = data.du_doan.toUpperCase().includes("XỈU");
+  // Đèn LED
+  const isTai = data.predict.toUpperCase().includes("TÀI");
+  const isXiu = data.predict.toUpperCase().includes("XỈU");
   
   document.getElementById("led-t").classList.toggle("on", isTai);
   document.getElementById("led-x").classList.toggle("on", isXiu);
 
-  // 3. Trạng thái và Độ tin cậy
+  // Độ tin cậy
+  const confidence = parseInt(data.confidence);
   const stt = document.getElementById("stt");
-  const confidence = parseInt(data.tin_cay);
-  stt.innerText = `ĐỘ TIN CẬY: ${data.tin_cay}`;
-  stt.style.color = confidence >= 80 ? "#00ff88" : "#ffd700";
+  stt.innerText = `ĐỘ TIN CẬY: ${data.confidence} • ${data.analysis}`;
+  stt.style.color = confidence >= 80 ? "#00ff88" : confidence >= 60 ? "#ffd700" : "#ff3355";
 
-  // 4. Thông tin bổ sung
-  document.getElementById("extra-info").innerText = `Rate: ${data.stats.rate} | Win: ${data.stats.win}`;
-  document.getElementById("ping-box").innerText = `Ping: ${ping}ms | TuanX3000 PRO`;
+  // Thông tin bổ sung
+  document.getElementById("extra-info").innerText = 
+    `Rate: ${data.accuracy.rate} | Win: ${data.accuracy.win}/${data.accuracy.win + data.accuracy.loss}`;
+
+  document.getElementById("ping-box").innerText = 
+    `Ping: ${ping}ms | ${rootData.version || 'TuanX3000 v11.0'}`;
 }
 
-// ================== ĐIỀU KHIỂN GIAO DIỆN ==================
+// ================== ĐIỀU KHIỂN ==================
 function setMode(m) {
   currentMode = m;
   localStorage.setItem('tuanx3000_mode', m);
+  
   document.getElementById("o-md5").classList.toggle("active", m === 'md5');
   document.getElementById("o-nohu").classList.toggle("active", m === 'nohu');
+  
   document.getElementById("label").innerText = `MAX789 ${m.toUpperCase()} PRO`;
   if (document.getElementById("m-panel").style.display === "block") toggleMenu();
+  
   refreshData();
 }
 
@@ -200,7 +204,7 @@ function resize(f) {
   document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 }
 
-// LOGIC KÉO THẢ (DRAG & DROP)
+// Drag & Drop
 const el = document.getElementById("tool-root");
 let isDrag = false, offset = [0, 0];
 
@@ -228,10 +232,10 @@ window.addEventListener('touchmove', move, {passive: false});
 window.addEventListener('mouseup', end);
 window.addEventListener('touchend', end);
 
-// KHỞI TẠO BAN ĐẦU
+// KHỞI TẠO
 document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 setMode(currentMode);
-setInterval(refreshData, 3000); // Cập nhật mỗi 3 giây
+setInterval(refreshData, 2800); // ~2.8 giây
 refreshData();
 </script>
 </body>
