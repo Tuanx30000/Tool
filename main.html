@@ -8,7 +8,7 @@
         body { background-color: #050505; color: #00ff41; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; overflow: hidden; }
         * { box-sizing: border-box; user-select: none; }
         
-        .container { position: relative; z-index: 10; max-width: 450px; margin: 0 auto; padding: 20px; height: 100vh; display: flex; flex-direction: column; background: radial-gradient(circle at center, #0f0f1a 0%, #000 100%); }
+        .container { position: relative; z-index: 10; max-width: 450px; margin: 0 auto; padding: 20px; height: 100dvh; display: flex; flex-direction: column; background: radial-gradient(circle at center, #0f0f1a 0%, #000 100%); }
         
         .header { text-align: center; margin-bottom: 15px; }
         .google-badge { background: #fff; color: #444; font-weight: bold; font-size: 10px; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
@@ -188,7 +188,6 @@
             document.getElementById('msg-status').innerText = "";
         }
 
-        // --- XÁC MINH KEY VÀO TOOL ---
         function verifyFinal() {
             const inputKey = document.getElementById('key-input').value.trim();
             const msg = document.getElementById('msg-status');
@@ -211,11 +210,9 @@
 
             msg.style.color = "#00ff41"; 
             msg.innerText = "🚀 ĐANG KÍCH HOẠT TOOL...";
-            // Đã fix lỗi chuyển trang không mang theo username
             setTimeout(() => { window.location.href = `${targetPage}?u=${encodeURIComponent(username)}`; }, 800);
         }
 
-        // --- MÀN HÌNH NẠP TIỀN ---
         function showNapTienModal() {
             const html = `
                 <p style="color:#888; text-align:center; font-size:13px;">Hệ thống nạp tự động qua QR Ngân hàng</p>
@@ -240,12 +237,7 @@
             document.getElementById('custom-modal').classList.add('active');
         }
 
-        // --- MÀN HÌNH MUA KEY ---
         function showMuaKeyModal() {
-            if (!serverData.balance || parseFloat(serverData.balance) <= 0) {
-                alert("❌ Bạn chưa có số dư. Vui lòng NẠP TIỀN trước khi mua key!");
-                return;
-            }
             selectedPackage = null;
             const html = `
                 <div class="package-list">
@@ -285,7 +277,7 @@
 
         async function confirmBuy() {
             if (!selectedPackage) return;
-            if (parseFloat(serverData.balance) < selectedPackage.price) {
+            if (parseFloat(serverData.balance || 0) < selectedPackage.price) {
                 alert("❌ Số dư không đủ, vui lòng nạp thêm!");
                 return;
             }
@@ -315,7 +307,6 @@
             }
         }
 
-        // --- HỘP THƯ VÀ HỒ SƠ ---
         function showInboxModal() {
             const html = `
                 <div style="background:#111; border-radius:12px; padding:15px; max-height:380px; overflow-y:auto; color:#ddd; font-size:14px; margin-bottom: 10px;">
