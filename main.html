@@ -34,10 +34,10 @@
         .bottom-btn { flex: 1; padding: 12px; margin: 0 5px; background: #1a1a1a; color: #00ff41; border: 1px solid #00ff41; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center; font-size: 13px; transition: 0.2s; }
         .bottom-btn:active { background: #00ff41; color: #000; }
 
-        /* MODAL NÂNG CẤP */
+        /* MODAL */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .modal-overlay.active { display: flex; }
-        .modal-box { background: linear-gradient(145deg, #0f0f0f, #1a1a1a); border: 2px solid #00ff41; border-radius: 25px; padding: 25px; width: 92%; max-width: 380px; box-shadow: 0 0 40px rgba(0,255,65,0.2); position: relative; }
+        .modal-box { background: linear-gradient(145deg, #0f0f0f, #1a1a1a); border: 2px solid #00ff41; border-radius: 25px; padding: 25px; width: 92%; max-width: 380px; box-shadow: 0 0 40px rgba(0,255,65,0.2); position: relative; max-height: 90vh; overflow-y: auto; }
         .modal-title { color: #00ff41; text-align: center; font-size: 20px; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
         /* Nạp tiền Input */
@@ -52,7 +52,8 @@
         .package-name { font-weight: bold; color: #fff; font-size: 15px; }
         .package-price { color: #00ff41; font-weight: bold; }
 
-        .btn-action { background: #00ff41; color: #000; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 900; font-size: 16px; cursor: pointer; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,255,65,0.3); }
+        .btn-action { background: #00ff41; color: #000; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 900; font-size: 16px; cursor: pointer; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0,255,65,0.3); transition: 0.2s; }
+        .btn-action:disabled { background: #333; color: #888; cursor: not-allowed; box-shadow: none; }
         .btn-close { background: transparent; color: #888; border: none; width: 100%; padding: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
 
         /* Màn hình Key VIP */
@@ -63,7 +64,9 @@
         .key-input-container { position: relative; margin: 15px 0 25px; }
         .key-input-container input { width: 100%; padding: 18px 20px 18px 55px; background: #1a1a1a; border: 2px solid #333; border-radius: 12px; color: #fff; font-size: 18px; font-weight: bold; text-align: center; letter-spacing: 3px; outline: none; }
         .key-input-container::before { content: "🔑"; position: absolute; left: 20px; top: 50%; transform: translateY(-50%); font-size: 26px; }
-        .btn-key-activate { background: linear-gradient(90deg, #00ff41, #00cc33); color: #000; font-weight: 900; font-size: 18px; padding: 16px; border: none; border-radius: 12px; width: 100%; margin-bottom: 12px; box-shadow: 0 0 20px rgba(0,255,65,0.6); cursor: pointer;}
+        
+        .btn-key-activate { background: linear-gradient(90deg, #00ff41, #00cc33); color: #000; font-weight: 900; font-size: 18px; padding: 16px; border: none; border-radius: 12px; width: 100%; margin-bottom: 12px; box-shadow: 0 0 20px rgba(0,255,65,0.6); cursor: pointer; transition: 0.2s;}
+        .btn-key-activate:disabled { background: #333; color: #888; cursor: not-allowed; box-shadow: none; }
         .btn-key-back { background: #333; color: #ccc; font-weight: bold; padding: 14px; border: none; border-radius: 12px; width: 100%; cursor: pointer;}
 
         .tele-float { position: fixed; bottom: 70px; right: 15px; background: #0088cc; color: #fff; padding: 10px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 12px; z-index: 999; box-shadow: 0 0 10px rgba(0,136,204,0.5); }
@@ -119,7 +122,7 @@
                 <input type="text" id="key-input" placeholder="NHẬP MÃ KEY VIP" maxlength="25">
             </div>
 
-            <button class="btn-key-activate" onclick="verifyFinal()">KÍCH HOẠT TOOL</button>
+            <button id="btn-activate" class="btn-key-activate" onclick="verifyFinal()">KÍCH HOẠT TOOL</button>
             <button class="btn-key-back" onclick="backToGame()">QUAY LẠI</button>
         </div>
 
@@ -162,7 +165,8 @@
                 const data = await res.json();
                 if (data.success) {
                     serverData = data;
-                    document.getElementById('balance-amount').innerText = Number(data.balance || 0).toLocaleString('vi-VN');
+                    const currentBalance = Number(data.balance) || 0;
+                    document.getElementById('balance-amount').innerText = currentBalance.toLocaleString('vi-VN');
                 } else {
                     alert("Không tìm thấy tài khoản!");
                     window.location.href = "index.html";
@@ -179,6 +183,7 @@
             document.getElementById('key-game-name').innerText = "CỔNG GAME: " + name.toUpperCase();
             document.getElementById('main-title').innerText = "XÁC MINH KEY";
             document.getElementById('msg-status').innerText = "";
+            document.getElementById('btn-activate').disabled = false;
         }
 
         function backToGame() {
@@ -191,6 +196,7 @@
         function verifyFinal() {
             const inputKey = document.getElementById('key-input').value.trim();
             const msg = document.getElementById('msg-status');
+            const btnActivate = document.getElementById('btn-activate');
 
             if (!inputKey) {
                 msg.style.color = "#ff4d4d"; 
@@ -208,9 +214,14 @@
                 return;
             }
 
+            // Chống spam click
+            btnActivate.disabled = true;
             msg.style.color = "#00ff41"; 
             msg.innerText = "🚀 ĐANG KÍCH HOẠT TOOL...";
-            setTimeout(() => { window.location.href = `${targetPage}?u=${encodeURIComponent(username)}`; }, 800);
+            
+            setTimeout(() => { 
+                window.location.href = `${targetPage}?u=${encodeURIComponent(username)}`; 
+            }, 800);
         }
 
         function showNapTienModal() {
@@ -223,15 +234,20 @@
             `;
             document.getElementById('modal-title').innerText = "NẠP TIỀN VÀO VÍ";
             document.getElementById('modal-body').innerHTML = html;
+            
             const btn = document.getElementById('modal-confirm-btn');
             btn.className = "btn-action";
             btn.innerText = "TẠO MÃ QR NẠP TIỀN";
+            btn.disabled = false;
+            
             btn.onclick = () => {
                 const amt = document.getElementById('nap-amount-input').value;
                 if (!amt || amt < 10000) {
                     alert("❌ Số tiền tối thiểu là 10.000đ");
                     return;
                 }
+                btn.disabled = true;
+                btn.innerText = "ĐANG TẠO MÃ...";
                 window.location.href = `qr.html?amount=${amt}&username=${encodeURIComponent(username)}`;
             };
             document.getElementById('custom-modal').classList.add('active');
@@ -261,7 +277,11 @@
             `;
             document.getElementById('modal-title').innerText = "🛒 CHỌN GÓI KEY VIP";
             document.getElementById('modal-body').innerHTML = html;
-            document.getElementById('modal-confirm-btn').className = "btn-action hidden";
+            
+            const btn = document.getElementById('modal-confirm-btn');
+            btn.className = "btn-action hidden";
+            btn.disabled = false;
+            
             document.getElementById('custom-modal').classList.add('active');
         }
 
@@ -269,41 +289,53 @@
             document.querySelectorAll('.package-item').forEach(i => i.classList.remove('selected'));
             el.classList.add('selected');
             selectedPackage = { type, price };
+            
             const btn = document.getElementById('modal-confirm-btn');
             btn.classList.remove('hidden');
             btn.innerText = `XÁC NHẬN MUA - ${price.toLocaleString('vi-VN')}đ`;
+            btn.disabled = false;
             btn.onclick = confirmBuy;
         }
 
         async function confirmBuy() {
             if (!selectedPackage) return;
-            if (parseFloat(serverData.balance || 0) < selectedPackage.price) {
+            
+            const currentBalance = Number(serverData.balance) || 0;
+            if (currentBalance < selectedPackage.price) {
                 alert("❌ Số dư không đủ, vui lòng nạp thêm!");
                 return;
             }
             
             const btn = document.getElementById('modal-confirm-btn');
             btn.innerText = "ĐANG XỬ LÝ...";
-            btn.disabled = true;
+            btn.disabled = true; // Chống spam click
 
             try {
                 const res = await fetch(SCRIPT_URL, {
                     method: "POST",
-                    body: JSON.stringify({ action: "buy_key", username: username, package: selectedPackage.type, price: selectedPackage.price })
+                    body: JSON.stringify({ 
+                        action: "buy_key", 
+                        username: username, 
+                        package: selectedPackage.type, 
+                        price: selectedPackage.price 
+                    })
                 });
                 const data = await res.json();
                 if (data.success) {
-                    serverData.balance = data.newBalance || (serverData.balance - selectedPackage.price);
+                    serverData.balance = data.newBalance !== undefined ? data.newBalance : (currentBalance - selectedPackage.price);
                     document.getElementById('balance-amount').innerText = Number(serverData.balance).toLocaleString('vi-VN');
                     alert("✅ Đã gửi yêu cầu mua key thành công! Vui lòng chờ Admin duyệt.");
                     closeModal();
                 } else {
                     alert("❌ Lỗi: " + (data.message || "Không thể xử lý."));
-                    closeModal();
+                    btn.disabled = false;
+                    btn.innerText = `XÁC NHẬN MUA - ${selectedPackage.price.toLocaleString('vi-VN')}đ`;
                 }
             } catch (e) { 
-                alert("❌ Lỗi kết nối server!"); 
-                closeModal(); 
+                console.error("Lỗi mua key:", e);
+                alert("❌ Lỗi kết nối server! Vui lòng thử lại."); 
+                btn.disabled = false;
+                btn.innerText = `XÁC NHẬN MUA - ${selectedPackage.price.toLocaleString('vi-VN')}đ`;
             }
         }
 
