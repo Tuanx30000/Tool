@@ -45,7 +45,7 @@ html, body {
 /* Tool chính */
 #tool-root {
   position:fixed; left:50%; top:20%; transform:translate(-50%, -50%) scale(1);
-  width:320px; height:168px; border-radius:68px;
+  width:320px; height:178px; border-radius:68px;
   display:flex; align-items:center; justify-content:space-between;
   padding:0 22px; z-index:1000000; touch-action:none;
   background:rgba(15,15,22,0.88); backdrop-filter:blur(25px);
@@ -65,22 +65,22 @@ html, body {
   letter-spacing:1.5px; margin-bottom:4px; text-transform:uppercase; 
 }
 #sid { 
-  font-size:14px; font-weight:900; color:#00eaff; 
-  font-family:monospace; letter-spacing:0.5px; 
+  font-size:13.5px; font-weight:700; color:#00eaff; 
+  font-family:monospace; margin-bottom:4px;
 }
 #res { 
-  font-size:34px; font-weight:900; color:#fff; 
-  text-shadow:0 0 15px rgba(255,255,255,0.5); margin:4px 0; 
+  font-size:46px; font-weight:900; color:#fff; 
+  text-shadow:0 0 22px rgba(255,255,255,0.7); margin:6px 0 8px 0; 
 }
 #stt { 
-  font-size:9.5px; font-weight:800; text-transform:uppercase; 
-  letter-spacing:0.6px; 
+  font-size:9.8px; font-weight:800; text-transform:uppercase; 
+  letter-spacing:0.6px; line-height:1.4; min-height:28px;
 }
 #extra-info { 
-  font-size:8.5px; color:#aaa; margin-top:3px; line-height:1.3; 
+  font-size:8.8px; color:#aaa; margin-top:4px; line-height:1.35; 
 }
 #ping-box { 
-  font-size:8px; color:#666; margin-top:5px; font-weight:bold; 
+  font-size:8px; color:#666; margin-top:6px; font-weight:bold; 
 }
 </style>
 </head>
@@ -102,29 +102,26 @@ html, body {
 <div id="tool-root">
   <div id="led-t" class="led l-t"></div>
   <div class="core">
-    <div id="label">MAX789 MASTER AI</div>
-    <div id="sid">#CONNECTING</div>
+    <div id="label">MAX789 MASTER PRO</div>
+    <div id="sid">PHIÊN #------</div>
     <div id="res">...</div>
-    <div id="stt">ĐANG KHỞI TẠO AI</div>
-    <div id="extra-info">Rate: -- | Win: --</div>
-    <div id="ping-box">Ping: --ms | TuanX3000 v11.0</div>
+    <div id="stt">ĐANG PHÂN TÍCH...</div>
+    <div id="extra-info">Rate: --% | W: -- | L: --</div>
+    <div id="ping-box">Ping: --ms | TuanX3000 v2.1</div>
   </div>
   <div id="led-x" class="led l-x"></div>
 </div>
 
 <script>
-const urlParams = new URLSearchParams(window.location.search);
-const currentUser = urlParams.get('u') || localStorage.getItem('tuanx3000_user');
+const API_URL = "https://apimax789-production.up.railway.app/api/prediction";
 
-function goBack() {
-    window.location.href = `main.html?u=${encodeURIComponent(currentUser)}`;
-}
-
-// API MỚI (đã khớp link dò soát)
-const API_URL = "https://apimax789-production.up.railway.app/api/dual-engine?provider=railway";
 let currentMode = localStorage.getItem('tuanx3000_mode') || 'nohu'; 
 let currentScale = parseFloat(localStorage.getItem('tuanx3000_scale')) || 1.0;
 let abortCtrl = null;
+
+function goBack() {
+    window.location.href = `main.html?u=${encodeURIComponent(currentUser || '')}`;
+}
 
 // ================== CẬP NHẬT DỮ LIỆU ==================
 async function refreshData() {
@@ -132,51 +129,60 @@ async function refreshData() {
   abortCtrl = new AbortController();
   
   const startTime = Date.now();
-  try {
-    const response = await fetch(API_URL, { signal: abortCtrl.signal });
-    const json = await response.json();
-    
-    // Cấu trúc mới: json.results
-    const modeKey = currentMode.toUpperCase(); // NOHU hoặc MD5
-    const modeData = json.results[modeKey];
 
-    if (modeData) {
-      renderUI(modeData, json, Date.now() - startTime);
+  try {
+    const response = await fetch(API_URL, { 
+      signal: abortCtrl.signal,
+      cache: "no-cache"
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const json = await response.json();
+    const modeKey = currentMode.toUpperCase();
+    const data = json.results[modeKey];
+
+    if (data) {
+      renderUI(data, json, Date.now() - startTime);
     } else {
       document.getElementById("stt").innerText = "MODE KHÔNG TÌM THẤY";
     }
   } catch (e) {
     if (e.name !== 'AbortError') {
-      console.log("Kết nối lại...");
-      document.getElementById("stt").innerText = "🔄 RECONNECTING...";
+      console.error("Lỗi kết nối:", e);
+      document.getElementById("stt").innerText = "🔄 KẾT NỐI LẠI...";
     }
   }
 }
 
 function renderUI(data, rootData, ping) {
-  // Session & Kết quả
-  document.getElementById("sid").innerText = `#${data.next_session}`;
-  document.getElementById("res").innerText = data.predict.toUpperCase();
+  // === PHẦN PHIÊN SAU (next_session) ===
+  document.getElementById("sid").innerText = `PHIÊN #${data.next_session || '------'}`;
+
+  // === DỰ ĐOÁN CHỈ LẤY KẾT QUẢ THUẦN (TÀI hoặc XỈU) ===
+  const predict = (data.predict || '...').toUpperCase();
+  document.getElementById("res").innerText = predict;
 
   // Đèn LED
-  const isTai = data.predict.toUpperCase().includes("TÀI");
-  const isXiu = data.predict.toUpperCase().includes("XỈU");
-  
+  const isTai = predict.includes("TÀI");
+  const isXiu = predict.includes("XỈU");
   document.getElementById("led-t").classList.toggle("on", isTai);
   document.getElementById("led-x").classList.toggle("on", isXiu);
 
   // Độ tin cậy
-  const confidence = parseInt(data.confidence);
-  const stt = document.getElementById("stt");
-  stt.innerText = `ĐỘ TIN CẬY: ${data.confidence} • ${data.analysis}`;
-  stt.style.color = confidence >= 80 ? "#00ff88" : confidence >= 60 ? "#ffd700" : "#ff3355";
+  const confidence = parseInt(data.confidence) || 50;
+  const sttEl = document.getElementById("stt");
+  sttEl.innerText = `ĐỘ TIN CẬY: ${data.confidence || '---'}`;
+  sttEl.style.color = confidence >= 80 ? "#00ff88" : confidence >= 65 ? "#ffd700" : "#ff3355";
 
-  // Thông tin bổ sung
+  // Win / Loss / Rate
+  const acc = data.accuracy || {};
   document.getElementById("extra-info").innerText = 
-    `Rate: ${data.accuracy.rate} | Win: ${data.accuracy.win}/${data.accuracy.win + data.accuracy.loss}`;
+    `Rate: ${acc.rate || '--'} | W: ${acc.win || 0} | L: ${acc.loss || 0}`;
 
+  // Ping
   document.getElementById("ping-box").innerText = 
-    `Ping: ${ping}ms | ${rootData.version || 'TuanX3000 v11.0'}`;
+    `Ping: ${ping}ms | TuanX3000 v2.1`;
 }
 
 // ================== ĐIỀU KHIỂN ==================
@@ -188,14 +194,14 @@ function setMode(m) {
   document.getElementById("o-nohu").classList.toggle("active", m === 'nohu');
   
   document.getElementById("label").innerText = `MAX789 ${m.toUpperCase()} PRO`;
-  if (document.getElementById("m-panel").style.display === "block") toggleMenu();
   
+  if (document.getElementById("m-panel").style.display === "block") toggleMenu();
   refreshData();
 }
 
 function toggleMenu() {
-  const p = document.getElementById("m-panel");
-  p.style.display = p.style.display === "block" ? "none" : "block";
+  const panel = document.getElementById("m-panel");
+  panel.style.display = panel.style.display === "block" ? "none" : "block";
 }
 
 function resize(f) {
@@ -204,38 +210,51 @@ function resize(f) {
   document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 }
 
-// Drag & Drop
-const el = document.getElementById("tool-root");
-let isDrag = false, offset = [0, 0];
+// Drag & Drop Tool
+const tool = document.getElementById("tool-root");
+let isDragging = false, offsetX = 0, offsetY = 0;
 
-const start = (e) => {
-  isDrag = true;
-  el.style.transition = 'none';
-  const c = e.touches ? e.touches[0] : e;
-  offset = [c.clientX - el.offsetLeft, c.clientY - el.offsetTop];
-};
-const move = (e) => {
-  if (!isDrag) return;
-  const c = e.touches ? e.touches[0] : e;
-  el.style.left = (c.clientX - offset[0]) + 'px';
-  el.style.top = (c.clientY - offset[1]) + 'px';
-};
-const end = () => {
-  isDrag = false;
-  el.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-};
+tool.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  offsetX = e.clientX - tool.offsetLeft;
+  offsetY = e.clientY - tool.offsetTop;
+  tool.style.transition = 'none';
+});
 
-el.addEventListener('mousedown', start);
-el.addEventListener('touchstart', start, {passive: false});
-window.addEventListener('mousemove', move);
-window.addEventListener('touchmove', move, {passive: false});
-window.addEventListener('mouseup', end);
-window.addEventListener('touchend', end);
+tool.addEventListener('touchstart', (e) => {
+  isDragging = true;
+  const touch = e.touches[0];
+  offsetX = touch.clientX - tool.offsetLeft;
+  offsetY = touch.clientY - tool.offsetTop;
+  tool.style.transition = 'none';
+}, {passive: false});
 
-// KHỞI TẠO
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  tool.style.left = (e.clientX - offsetX) + 'px';
+  tool.style.top = (e.clientY - offsetY) + 'px';
+});
+
+window.addEventListener('touchmove', (e) => {
+  if (!isDragging) return;
+  const touch = e.touches[0];
+  tool.style.left = (touch.clientX - offsetX) + 'px';
+  tool.style.top = (touch.clientY - offsetY) + 'px';
+}, {passive: false});
+
+window.addEventListener('mouseup', () => { 
+  isDragging = false; 
+  tool.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
+});
+window.addEventListener('touchend', () => { 
+  isDragging = false; 
+  tool.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; 
+});
+
+// ================== KHỞI TẠO ==================
 document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 setMode(currentMode);
-setInterval(refreshData, 2800); // ~2.8 giây
+setInterval(refreshData, 2800);
 refreshData();
 </script>
 </body>
