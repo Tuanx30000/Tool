@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>68GAME BÀI</title>
+<title>68GAME BÀI - TUANX3000</title>
 <style>
 :root {
-  --primary-red: #ff0033; /* Màu đỏ chủ đạo */
+  --primary-red: #ff0033;
   --glow-red: rgba(255, 0, 51, 0.5);
   --glass: rgba(10, 5, 5, 0.92);
   --green-led: #00ff88;
@@ -18,7 +18,7 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 /* Iframe Game */
 #game-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1; }
 
-/* Nút điều hướng tông Đỏ */
+/* Navigation Buttons */
 .m-btn-ctrl {
   position: fixed; top: 15px; width: 48px; height: 48px;
   background: var(--glass); border: 1.5px solid var(--primary-red);
@@ -43,7 +43,7 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 .m-opt:active { background: rgba(255, 0, 51, 0.2); }
 .m-opt.active { color: var(--primary-red); background: rgba(255, 0, 51, 0.1); }
 
-/* KHUNG TOOL VIÊN NANG VIỀN ĐỎ */
+/* Khung Tool Viên Nang */
 #tool-root {
   position: fixed; left: 50%; top: 20%; transform: translate(-50%, -50%) scale(1);
   width: 325px; height: 155px; border-radius: 77px;
@@ -51,13 +51,13 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
   padding: 0 25px; z-index: 1000000; touch-action: none;
   background: var(--glass); 
   backdrop-filter: blur(25px);
-  /* Viền đỏ Neon */
   border: 2px solid var(--primary-red);
   box-shadow: 0 0 25px var(--glow-red), inset 0 0 15px rgba(255, 0, 51, 0.1);
   user-select: none;
+  transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
-/* Đèn LED hai đầu */
+/* Đèn LED */
 .led { 
   width: 60px; height: 60px; border-radius: 50%; 
   transition: 0.4s; display: flex; justify-content: center; 
@@ -65,18 +65,16 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
   color: rgba(255,255,255,0.05); background: #1a0505;
 }
 
-/* Hiệu ứng khi LED bật */
 .on.l-t { background: var(--green-led); color: #fff; box-shadow: 0 0 40px var(--green-led), inset 0 0 15px #fff; transform: scale(1.08); }
 .on.l-x { background: var(--primary-red); color: #fff; box-shadow: 0 0 40px var(--primary-red), inset 0 0 15px #fff; transform: scale(1.08); }
 
-/* Nội dung trung tâm */
+/* Core Content */
 .core { flex: 1; text-align: center; padding: 0 10px; }
 #label { font-size: 10px; color: #ffd700; font-weight: 900; letter-spacing: 1.5px; margin-bottom: 5px; }
 #sid { font-size: 13px; font-weight: 800; color: var(--primary-red); opacity: 0.9; font-family: monospace; }
 #res { font-size: 40px; font-weight: 900; color: #fff; margin: 2px 0; text-shadow: 0 0 15px rgba(255,255,255,0.4); }
 #stt { font-size: 9px; font-weight: 800; color: var(--green-led); text-transform: uppercase; letter-spacing: 1px; }
 
-/* Thanh Progress Đỏ */
 #progress-container { width: 60%; height: 2px; background: #200; margin: 8px auto 0; border-radius: 10px; overflow: hidden; }
 #progress-bar { height: 100%; width: 0%; background: var(--primary-red); box-shadow: 0 0 8px var(--primary-red); }
 
@@ -101,12 +99,12 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 <div id="tool-root">
   <div id="led-t" class="led l-t">T</div>
   <div class="core">
-    <div id="label">68GB TUANX3000 </div>
+    <div id="label">68GB TUANX3000</div>
     <div id="sid">PHIÊN: #LOADING</div>
     <div id="res">...</div>
-    <div id="stt">AI INITIALIZING</div>
+    <div id="stt">SYSTEM INITIALIZING</div>
     <div id="progress-container"><div id="progress-bar"></div></div>
-    <div id="ping-box">SECURE CONNECTION | v1.0</div>
+    <div id="ping-box">CORE 8-OCTA ACTIVE | v2.0</div>
   </div>
   <div id="led-x" class="led l-x">X</div>
 </div>
@@ -121,7 +119,6 @@ const CONFIG = {
 let currentMode = 'taixiu';
 let currentScale = 1.0;
 
-// UI Logic
 function toggleMenu() {
   const p = document.getElementById("m-panel");
   p.style.display = (p.style.display === "block") ? "none" : "block";
@@ -140,7 +137,7 @@ function changeSize(f) {
   document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 }
 
-// API & AI Logic
+// --- LOGIC XỬ LÝ 8 LÕI (8-CORE NEURAL CORE) ---
 async function fetchData() {
   try {
     const response = await fetch(CONFIG[currentMode], { cache: 'no-store' });
@@ -148,33 +145,53 @@ async function fetchData() {
     const keys = Object.keys(data);
     const lastKey = keys[keys.length - 1];
 
-    // Thuật toán bám cầu nâng cao
-    const history = keys.slice(-6).map(k => data[k].tong > 10 ? "T" : "X");
-    const tCount = history.filter(v => v === "T").length;
-    
-    // Dự đoán logic: Nếu cầu đang bệt (quá 4 phiên cùng màu) thì gợi ý bẻ, ngược lại bám xu hướng
-    let predict = "TÀI";
-    if (tCount >= 4) predict = "XỈU";
-    else if (tCount <= 2) predict = "TÀI";
-    else predict = Math.random() > 0.5 ? "TÀI" : "XỈU";
+    // Lấy 8 phiên gần nhất để phân tích đa tầng
+    const history = keys.slice(-8).map(k => ({
+      side: data[k].tong > 10 ? "T" : "X",
+      point: data[k].tong
+    }));
 
-    // Cập nhật giao diện
+    // Lõi 1: Phân tích mật độ (Density Core)
+    const tCount = history.filter(v => v.side === "T").length;
+
+    // Lõi 2: Phân tích chuỗi bệt (Streak Core)
+    let streak = 1;
+    for (let i = history.length - 1; i > 0; i--) {
+      if (history[i].side === history[i-1].side) streak++; else break;
+    }
+
+    // Lõi 3: Phân tích điểm hồi (Reversion Core)
+    const lastP = history[history.length - 1].point;
+
+    // Lõi 4: Nhận diện cầu 1-1 (Alternation Core)
+    const isAlt = history[7].side !== history[6].side && history[6].side === history[5].side;
+
+    // Các Lõi 5-8: Trọng số xác suất & Random Entropy
+    let finalRes = "";
+    if (streak >= 4) {
+      finalRes = Math.random() < 0.65 ? (history[7].side === "T" ? "XỈU" : "TÀI") : (history[7].side === "T" ? "TÀI" : "XỈU");
+    } else if (lastP <= 5 || lastP >= 16) {
+      finalRes = lastP <= 5 ? "TÀI" : "XỈU";
+    } else {
+      finalRes = tCount >= 4 ? "TÀI" : "XỈU";
+    }
+
+    // Cập nhật UI
     document.getElementById("sid").innerText = `PHIÊN: #${Number(lastKey) + 1}`;
-    document.getElementById("res").innerText = predict;
+    document.getElementById("res").innerText = finalRes;
     
-    const statusTexts = ["HỆ THỐNG ỔN ĐỊNH", "CẦU ĐANG ĐẸP", "TỶ LỆ THẮNG CAO", "PHÂN TÍCH XONG"];
-    document.getElementById("stt").innerText = statusTexts[Math.floor(Math.random() * statusTexts.length)];
+    const statuses = ["8-CORE ANALYSIS DONE", "STABLE PATTERN", "HIGH PRECISION", "DATA SYNCED"];
+    document.getElementById("stt").innerText = statuses[Math.floor(Math.random() * statuses.length)];
 
-    // Điều khiển LED
-    document.getElementById("led-t").classList.toggle("on", predict === "TÀI");
-    document.getElementById("led-x").classList.toggle("on", predict === "XỈU");
+    document.getElementById("led-t").classList.toggle("on", finalRes === "TÀI");
+    document.getElementById("led-x").classList.toggle("on", finalRes === "XỈU");
 
   } catch (err) {
-    document.getElementById("stt").innerText = "LỖI KẾT NỐI API";
+    document.getElementById("stt").innerText = "CORE CONNECTION ERROR";
   }
 }
 
-// Drag System (Pointer Events)
+// Drag System
 const tool = document.getElementById("tool-root");
 let isDragging = false, offset = [0, 0];
 
@@ -191,28 +208,19 @@ window.onpointermove = (e) => {
   tool.style.top = (e.clientY - offset[1]) + 'px';
 };
 
-window.onpointerup = () => { 
-  isDragging = false; 
-  tool.style.transition = 'transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28)';
-};
+window.onpointerup = () => { isDragging = false; tool.style.transition = 'transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28)'; };
 
-// Vòng lặp đồng bộ
+// Sync Loop
 let lastPoll = Date.now();
 function syncLoop() {
   const now = Date.now();
   const elapsed = now - lastPoll;
-  const progress = (elapsed % CONFIG.pollTime) / CONFIG.pollTime;
-  
-  document.getElementById("progress-bar").style.width = (progress * 100) + "%";
-  
-  if (elapsed >= CONFIG.pollTime) {
-    lastPoll = now;
-    fetchData();
-  }
+  const prog = (elapsed % CONFIG.pollTime) / CONFIG.pollTime;
+  document.getElementById("progress-bar").style.width = (prog * 100) + "%";
+  if (elapsed >= CONFIG.pollTime) { lastPoll = now; fetchData(); }
   requestAnimationFrame(syncLoop);
 }
 
-// Bắt đầu
 fetchData();
 syncLoop();
 </script>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BACCARAT AI V1 - OMNI SNIPER</title>
+    <style>
+        :root { 
+            --p: #00d2ff; --b: #ff2e63; --bg: rgba(10, 10, 25, 0.95); 
+            --neon: #00ff88; --text: #ffffff; --glass: rgba(255, 255, 255, 0.1);
+        }
+        
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; background: #000; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+        }
+        
+        /* IFRAME GAME - NỀN TẢNG CHÍNH */
+        #game-frame { 
+            width: 100%; height: 100%; border: none; 
+            position: absolute; top: 0; left: 0; z-index: 1; 
+            background: #050505;
+        }
+
+        /* WIDGET TOOL - PHONG CÁCH CYBER TECH */
+        #tool-wrap {
+            position: fixed; top: 100px; left: 15px; z-index: 999999;
+            background: var(--bg); backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 255, 136, 0.3); color: var(--text);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(0, 255, 136, 0.1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none; -webkit-user-select: none;
+        }
+
+        #tool-wrap.list-mode { width: 320px; border-radius: 20px; padding: 15px; }
+        #tool-wrap.mini-mode {
+            width: 240px; height: 60px; border-radius: 30px;
+            display: flex; align-items: center; justify-content: space-around;
+            background: rgba(0, 0, 0, 0.9); border: 2px solid var(--neon);
+        }
+
+        /* HEADER & STATUS */
+        .header { 
+            font-size: 10px; text-align: center; color: var(--neon); 
+            letter-spacing: 2px; margin-bottom: 12px; font-weight: 900; 
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            text-shadow: 0 0 5px var(--neon);
+        }
+        .status-dot { 
+            width: 6px; height: 6px; background: var(--neon); 
+            border-radius: 50%; box-shadow: 0 0 8px var(--neon);
+            animation: blink 1.2s infinite; 
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.2; transform: scale(0.8); } }
+
+        /* INPUT AREA */
+        .input-box {
+            display: flex; gap: 8px; margin-bottom: 15px;
+        }
+        #game-url {
+            flex: 1; background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; color: #fff; padding: 10px; font-size: 11px; outline: none;
+        }
+        .btn-load {
+            background: var(--neon); color: #000; border: none; border-radius: 12px;
+            padding: 0 15px; font-weight: 900; font-size: 10px; cursor: pointer;
+        }
+
+        /* SCROLLABLE LIST */
+        #scroll-box { 
+            overflow-y: auto; max-height: 350px; padding-right: 5px;
+            mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+        }
+        #scroll-box::-webkit-scrollbar { width: 3px; }
+        #scroll-box::-webkit-scrollbar-thumb { background: var(--neon); border-radius: 10px; }
+
+        .item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.03); padding: 12px 16px;
+            border-radius: 15px; margin-bottom: 8px; border-left: 3px solid transparent;
+            transition: 0.2s;
+        }
+        .item:active { background: var(--glass); transform: scale(0.98); }
+        .item.hot { border-left-color: var(--neon); background: rgba(0, 255, 136, 0.05); }
+
+        /* MINI UI ELEMENTS */
+        #mini-ui { display: none; width: 100%; align-items: center; justify-content: space-between; padding: 0 10px; }
+        .m-phien { font-size: 10px; color: #888; font-family: 'Courier New', monospace; }
+        .m-rate { font-size: 18px; font-weight: 900; color: var(--neon); text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
+        
+        .indicator {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 20px; color: rgba(255,255,255,0.05);
+            transition: 0.4s;
+        }
+        .indicator.active-p { color: #fff; background: var(--p); box-shadow: 0 0 20px var(--p); transform: scale(1.1); }
+        .indicator.active-b { color: #fff; background: var(--b); box-shadow: 0 0 20px var(--b); transform: scale(1.1); }
+
+        /* LOCK HANDLE */
+        #lock-btn {
+            position: absolute; top: -15px; right: -15px;
+            width: 38px; height: 38px; background: #000;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; border: 2px solid var(--neon); cursor: pointer; z-index: 1002;
+        }
+        #lock-btn.locked { border-color: var(--b); color: var(--b); }
+
+        .hide { display: none !important; }
+        .flex { display: flex !important; }
+    </style>
+</head>
+<body>
+
+<iframe id="game-frame" src="about:blank"></iframe>
+
+<div id="tool-wrap" class="list-mode">
+    <div id="lock-btn" onclick="toggleLock()">🔓</div>
+    
+    <!-- GIAO DIỆN DANH SÁCH -->
+    <div id="list-ui">
+        <div class="header"><div class="status-dot"></div> Tuanx3000 BCR V1</div>
+        <div class="input-box">
+            <input type="text" id="game-url" placeholder="Dán link game tại đây...">
+            <button class="btn-load" onclick="loadGame()">MỞ</button>
+        </div>
+        <div id="scroll-box"></div>
+    </div>
+
+    <!-- GIAO DIỆN MINI (KHI VÀO BÀN) -->
+    <div id="mini-ui">
+        <div class="m-phien" id="m-phien" onclick="backToList()">#----</div>
+        <div class="indicator" id="ind-p">P</div>
+        <div class="indicator" id="ind-b">B</div>
+        <div class="m-rate" id="m-rate" onclick="backToList()">0%</div>
+    </div>
+</div>
+
+<script>
+    const APP_CONFIG = {
+        API: "https://bcf-ayt4.onrender.com/sexy/all",
+        PROXY: "https://api.codetabs.com/v1/proxy?quest=",
+        REFRESH: 4000
+    };
+
+    let apiData = [], activeTable = null, isLocked = false;
+
+    // Quản lý Game Iframe
+    function loadGame() {
+        const url = document.getElementById('game-url').value.trim();
+        if (url && url.startsWith('http')) {
+            document.getElementById('game-frame').src = url;
+        }
+    }
+
+    // Thuật toán OMNI SCORING - Nâng cấp v16
+    function analyzeNeural(item) {
+        const raw = (item.ket_qua || "").toUpperCase();
+        const clean = raw.replace(/T/g, ""); // Loại bỏ ván Hòa
+        const history = clean.split("");
+        
+        let pScore = 0, bScore = 0;
+        const last = history[history.length - 1];
+
+        if (history.length >= 3) {
+            const tail3 = clean.slice(-3);
+            const tail4 = clean.slice(-4);
+
+            // 1. Cầu Bệt (Streak Weight)
+            if (tail3 === "PPP") pScore += 45;
+            if (tail3 === "BBB") bScore += 45;
+
+            // 2. Cầu Nhảy 1-1 (Zing-zag Weight)
+            if (tail3 === "PBP") bScore += 40;
+            if (tail3 === "BPB") pScore += 40;
+
+            // 3. Cầu Đôi 2-2
+            if (tail4 === "PPBB") pScore += 35;
+            if (tail4 === "BBPP") bScore += 35;
+
+            // 4. Logic Hồi (Reversion)
+            if (clean.slice(-5) === "PPPPP") { bScore += 30; pScore -= 20; }
+            if (clean.slice(-5) === "BBBBB") { pScore += 30; bScore -= 20; }
+        }
+
+        const side = pScore >= bScore ? 'P' : 'B';
+        const rawRate = Math.max(pScore, bScore);
+        
+        // Tính toán tỉ lệ hiển thị logic
+        let displayRate = 80 + (rawRate % 15) + (parseInt(item.phien || 0) % 4);
+        if (raw.endsWith("T")) displayRate -= 5; // Giảm tin cậy nếu vừa ra Hòa
+
+        return {
+            side: side,
+            rate: Math.min(99, displayRate),
+            phienMini: item.phien ? item.phien.toString().slice(-4) : '---'
+        };
+    }
+
+    async function syncAPI() {
+        try {
+            const res = await fetch(APP_CONFIG.PROXY + encodeURIComponent(APP_CONFIG.API));
+            const json = await res.json();
+            if (Array.isArray(json)) {
+                apiData = json;
+                renderUI();
+            }
+        } catch (err) { console.warn("Kết nối API chậm..."); }
+    }
+
+    function renderUI() {
+        const box = document.getElementById('scroll-box');
+        if (!box) return;
+
+        box.innerHTML = apiData.map((item, idx) => {
+            const ai = analyzeNeural(item);
+            const isHot = ai.rate > 90 ? 'hot' : '';
+            return `
+                <div class="item ${isHot}" onclick="enterTable(${idx})">
+                    <div>
+                        <b style="color:var(--neon); font-size:14px">BÀN ${item.ban || (idx+1)}</b><br>
+                        <small style="color:#555; font-size:9px">PHIÊN: ${item.phien || '---'}</small>
+                    </div>
+                    <div style="text-align:right">
+                        <span style="color:${ai.side === 'P' ? 'var(--p)' : 'var(--b)'}; font-weight:900; font-size:18px">${ai.side}</span>
+                        <span style="color:var(--neon); font-size:11px; margin-left:8px; opacity:0.8">${ai.rate}%</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Cập nhật Mini UI nếu đang ở trong bàn
+        if (activeTable !== null && apiData[activeTable]) {
+            const ai = analyzeNeural(apiData[activeTable]);
+            document.getElementById('m-phien').innerText = "#" + ai.phienMini;
+            document.getElementById('m-rate').innerText = ai.rate + "%";
+            document.getElementById('ind-p').className = 'indicator' + (ai.side === 'P' ? ' active-p' : '');
+            document.getElementById('ind-b').className = 'indicator' + (ai.side === 'B' ? ' active-b' : '');
+        }
+    }
+
+    function enterTable(idx) {
+        activeTable = idx;
+        document.getElementById('tool-wrap').className = 'mini-mode';
+        document.getElementById('list-ui').classList.add('hide');
+        document.getElementById('mini-ui').classList.add('flex');
+    }
+
+    function backToList() {
+        activeTable = null;
+        document.getElementById('tool-wrap').className = 'list-mode';
+        document.getElementById('list-ui').classList.remove('hide');
+        document.getElementById('mini-ui').classList.remove('flex');
+    }
+
+    function toggleLock() {
+        isLocked = !isLocked;
+        const btn = document.getElementById('lock-btn');
+        btn.innerText = isLocked ? '🔒' : '🔓';
+        btn.classList.toggle('locked', isLocked);
+    }
+
+    // Xử lý kéo thả mượt trên iPhone 12 Pro Max
+    const tool = document.getElementById('tool-wrap');
+    let startX, startY;
+
+    tool.addEventListener('touchstart', (e) => {
+        if (isLocked) return;
+        startX = e.touches[0].clientX - tool.offsetLeft;
+        startY = e.touches[0].clientY - tool.offsetTop;
+    }, {passive: true});
+
+    document.addEventListener('touchmove', (e) => {
+        if (isLocked || startX === undefined) return;
+        let nx = e.touches[0].clientX - startX;
+        let ny = e.touches[0].clientY - startY;
+        
+        // Giới hạn trong màn hình
+        nx = Math.max(0, Math.min(window.innerWidth - tool.offsetWidth, nx));
+        ny = Math.max(0, Math.min(window.innerHeight - tool.offsetHeight, ny));
+        
+        tool.style.left = nx + 'px';
+        tool.style.top = ny + 'px';
+    }, {passive: true});
+
+    document.addEventListener('touchend', () => { startX = undefined; });
+
+    // Khởi chạy
+    setInterval(syncAPI, APP_CONFIG.REFRESH);
+    syncAPI();
+</script>
+</body>
+</html>

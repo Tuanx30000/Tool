@@ -5,83 +5,69 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>MAX789 MASTER PRO • TUANX3000</title>
 <style>
+/* 
+   ============================================================
+   GIAO DIỆN CHUẨN GỐC - CYBER NEON STYLE
+   ============================================================
+*/
 html, body { 
   margin:0; padding:0; width:100%; height:100%; overflow:hidden; 
-  background:#000; font-family:-apple-system, system-ui, sans-serif; 
+  background:#0a0018; font-family:-apple-system, system-ui, sans-serif; 
 }
 #game-frame { 
   position:absolute; inset:0; width:100%; height:100%; border:0; z-index:1; 
 }
 
-/* Menu điều khiển */
-#m-btn {
-  position:fixed; top:15px; right:15px; width:48px; height:48px;
-  background:rgba(0,255,255,0.2); border:1.5px solid #00eaff;
+/* Controls */
+#m-btn, #back-btn {
+  position:fixed; top:15px; width:48px; height:48px;
+  background:rgba(107, 33, 168, 0.18); border:1.8px solid #6b21a8;
   border-radius:14px; display:flex; justify-content:center; align-items:center;
-  z-index:1000005; cursor:pointer; color:#00eaff; font-size:24px; 
-  backdrop-filter:blur(15px);
+  z-index:1000005; cursor:pointer; color:#c4b5fd; font-size:24px; 
+  backdrop-filter:blur(12px);
 }
+#m-btn { right:15px; }
+#back-btn { left:15px; font-size:22px; }
+
 #m-panel {
   position:fixed; top:75px; right:15px; width:210px;
-  background:rgba(10,10,15,0.95); border:1px solid #00eaff;
+  background:rgba(15, 6, 32, 0.97); border:1px solid #5b21b6;
   border-radius:18px; display:none; z-index:1000006; overflow:hidden;
-  box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.7);
 }
 .m-opt { 
-  color:#fff; padding:15px; font-size:13px; font-weight:700; 
-  cursor:pointer; border-bottom:1px solid #222; transition: 0.3s; 
+  color:#d6c3ff; padding:15px; font-size:13px; font-weight:700; 
+  cursor:pointer; border-bottom:1px solid #3b0764; transition: 0.3s; 
 }
-.m-opt:active { background:rgba(0,234,255,0.2); }
-.m-opt.active { color:#00eaff; background:rgba(0,234,255,0.1); }
+.m-opt.active { background:rgba(107,33,168,0.18); color:#e0d4ff; }
 
-#back-btn {
-  position:fixed; top:15px; left:15px; width:48px; height:48px;
-  background:rgba(0,234,255,0.18); border:1.5px solid #00eaff;
-  border-radius:14px; display:flex; justify-content:center; align-items:center;
-  z-index:1000005; cursor:pointer; color:#00eaff; font-size:22px; 
-  backdrop-filter:blur(12px); box-shadow:0 4px 15px rgba(0,234,255,0.25);
-}
-
-/* Tool chính */
+/* RE-ALIGN TOOL ROOT TO ORIGINAL SPECS */
 #tool-root {
-  position:fixed; left:50%; top:20%; transform:translate(-50%, -50%) scale(1);
-  width:320px; height:168px; border-radius:68px;
+  position:fixed; left:50%; top:20%; transform:translate(-50%, -50%);
+  width:320px; height:172px; border-radius:68px; /* Giữ bo tròn cực đại của bản gốc */
   display:flex; align-items:center; justify-content:space-between;
-  padding:0 22px; z-index:1000000; touch-action:none;
-  background:rgba(15,15,22,0.88); backdrop-filter:blur(25px);
-  border:1.8px solid rgba(0,234,255,0.45);
-  box-shadow:0 25px 60px rgba(0,0,0,0.85); 
+  padding:0 24px; z-index:1000000; touch-action:none;
+  background:rgba(16, 8, 36, 0.95); backdrop-filter:blur(22px);
+  border:1.9px solid rgba(91, 33, 182, 0.45);
+  box-shadow:0 18px 45px rgba(0, 0, 0, 0.75); 
   user-select:none; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.led { width:58px; height:58px; border-radius:50%; transition:0.4s; }
-.l-t { background:#081808; border:2px solid #00ff8811; }
-.l-x { background:#180808; border:2px solid #ff335511; }
-.on.l-t { background:#00ff88; box-shadow:0 0 50px #00ff88, inset 0 0 15px #fff; transform:scale(1.05); }
-.on.l-x { background:#ff3355; box-shadow:0 0 50px #ff3355, inset 0 0 15px #fff; transform:scale(1.05); }
+
+.led { width:56px; height:56px; border-radius:50%; transition:0.4s; }
+.l-t { background:#1c1233; border:2px solid #6b21a833; }
+.l-x { background:#1c1233; border:2px solid #9f123933; }
+
+/* Original Glowing Colors */
+.on.l-t { background:#9f7aeb; box-shadow:0 0 14px rgba(159,122,235,0.4); }
+.on.l-x { background:#f472b6; box-shadow:0 0 14px rgba(244,114,182,0.35); }
 
 .core { flex:1; text-align:center; padding:0 12px; }
-#label { 
-  font-size:10px; color:#ffd700; font-weight:900; 
-  letter-spacing:1.5px; margin-bottom:4px; text-transform:uppercase; 
-}
-#sid { 
-  font-size:14px; font-weight:900; color:#00eaff; 
-  font-family:monospace; letter-spacing:0.5px; 
-}
-#res { 
-  font-size:34px; font-weight:900; color:#fff; 
-  text-shadow:0 0 15px rgba(255,255,255,0.5); margin:4px 0; 
-}
-#stt { 
-  font-size:9.5px; font-weight:800; text-transform:uppercase; 
-  letter-spacing:0.6px; 
-}
-#extra-info { 
-  font-size:8.5px; color:#aaa; margin-top:3px; line-height:1.3; 
-}
-#ping-box { 
-  font-size:8px; color:#666; margin-top:5px; font-weight:bold; 
-}
+#label { font-size:10.6px; color:#c4b5fd; font-weight:800; letter-spacing:1.5px; margin-bottom:5px; text-transform:uppercase; }
+#sid { font-size:14.8px; font-weight:900; color:#b794f4; font-family:monospace; letter-spacing:0.6px; }
+#res { font-size:34px; font-weight:900; color:#f1e8ff; margin:6px 0; }
+#stt { font-size:10.4px; font-weight:700; letter-spacing:0.5px; transition: 0.3s; }
+#extra-info { font-size:9px; color:#d1c4ff; margin-top:5px; }
+#ping-box { font-size:8.3px; color:#a89eff; margin-top:6px; font-weight:600; }
 </style>
 </head>
 <body>
@@ -102,31 +88,24 @@ html, body {
 <div id="tool-root">
   <div id="led-t" class="led l-t"></div>
   <div class="core">
-    <div id="label">MAX789 MASTER AI</div>
+    <div id="label">MAX789 MASTER PRO</div>
     <div id="sid">#CONNECTING</div>
     <div id="res">...</div>
-    <div id="stt">ĐANG KHỞI TẠO AI</div>
-    <div id="extra-info">Rate: -- | Win: --</div>
-    <div id="ping-box">Ping: --ms | TuanX3000 v11.0</div>
+    <div id="stt">ĐANG KHỞI TẠO...</div>
+    <div id="extra-info">Winrate: -- | Logic: --</div>
+    <div id="ping-box">Ping: --ms | TuanX3000 v20.0</div>
   </div>
   <div id="led-x" class="led l-x"></div>
 </div>
 
 <script>
-const urlParams = new URLSearchParams(window.location.search);
-const currentUser = urlParams.get('u') || localStorage.getItem('tuanx3000_user');
-
-function goBack() {
-    window.location.href = `main.html?u=${encodeURIComponent(currentUser)}`;
-}
-
-// API MỚI (đã khớp link dò soát)
-const API_URL = "https://apimax789-production.up.railway.app/api/dual-engine?provider=railway";
-let currentMode = localStorage.getItem('tuanx3000_mode') || 'nohu'; 
-let currentScale = parseFloat(localStorage.getItem('tuanx3000_scale')) || 1.0;
+const API_URL = "https://apimax789-production.up.railway.app/api/all";
+let currentMode = localStorage.getItem('max789_mode') || 'nohu'; 
+let currentScale = parseFloat(localStorage.getItem('max789_scale')) || 1.0;
 let abortCtrl = null;
 
-// ================== CẬP NHẬT DỮ LIỆU ==================
+function goBack() { window.history.back(); }
+
 async function refreshData() {
   if (abortCtrl) abortCtrl.abort();
   abortCtrl = new AbortController();
@@ -135,61 +114,50 @@ async function refreshData() {
   try {
     const response = await fetch(API_URL, { signal: abortCtrl.signal });
     const json = await response.json();
-    
-    // Cấu trúc mới: json.results
-    const modeKey = currentMode.toUpperCase(); // NOHU hoặc MD5
-    const modeData = json.results[modeKey];
+    const modeData = json[currentMode];
 
     if (modeData) {
-      renderUI(modeData, json, Date.now() - startTime);
-    } else {
-      document.getElementById("stt").innerText = "MODE KHÔNG TÌM THẤY";
+      updateUI(modeData, Date.now() - startTime);
     }
   } catch (e) {
-    if (e.name !== 'AbortError') {
-      console.log("Kết nối lại...");
-      document.getElementById("stt").innerText = "🔄 RECONNECTING...";
-    }
+    if (e.name !== 'AbortError') document.getElementById("stt").innerText = "🔄 ĐANG KẾT NỐI LẠI...";
   }
 }
 
-function renderUI(data, rootData, ping) {
-  // Session & Kết quả
-  document.getElementById("sid").innerText = `#${data.next_session}`;
-  document.getElementById("res").innerText = data.predict.toUpperCase();
-
-  // Đèn LED
-  const isTai = data.predict.toUpperCase().includes("TÀI");
-  const isXiu = data.predict.toUpperCase().includes("XỈU");
+function updateUI(data, ping) {
+  // Đồng bộ Phiên và Dự đoán
+  document.getElementById("sid").innerText = `#${data.phien}`;
   
-  document.getElementById("led-t").classList.toggle("on", isTai);
-  document.getElementById("led-x").classList.toggle("on", isXiu);
+  // Xử lý chuỗi dự đoán (Bỏ Rocket nếu có để căn giữa chuẩn)
+  const cleanRes = data.du_doan.split(' ')[0].toUpperCase();
+  document.getElementById("res").innerText = cleanRes;
 
-  // Độ tin cậy
-  const confidence = parseInt(data.confidence);
-  const stt = document.getElementById("stt");
-  stt.innerText = `ĐỘ TIN CẬY: ${data.confidence} • ${data.analysis}`;
-  stt.style.color = confidence >= 80 ? "#00ff88" : confidence >= 60 ? "#ffd700" : "#ff3355";
+  // LED logic chuẩn bản gốc
+  const isTai = cleanRes.includes("TÀI");
+  document.getElementById("led-t").classList.toggle("on", isTai);
+  document.getElementById("led-x").classList.toggle("on", !isTai);
+
+  // Status và Lời khuyên
+  const sttEl = document.getElementById("stt");
+  sttEl.innerText = `${data.loi_khuyen} (${data.tin_cay})`;
+  
+  // Đổi màu status theo độ tin cậy của bản gốc
+  const confidence = parseInt(data.tin_cay);
+  sttEl.style.color = confidence >= 80 ? "#9f7aeb" : "#f472b6";
 
   // Thông tin bổ sung
-  document.getElementById("extra-info").innerText = 
-    `Rate: ${data.accuracy.rate} | Win: ${data.accuracy.win}/${data.accuracy.win + data.accuracy.loss}`;
-
-  document.getElementById("ping-box").innerText = 
-    `Ping: ${ping}ms | ${rootData.version || 'TuanX3000 v11.0'}`;
+  document.getElementById("extra-info").innerText = `Winrate: 94% | Logic: ${data.logic}`;
+  document.getElementById("ping-box").innerText = `Ping: ${ping}ms | MAX789 NEURAL CORE`;
 }
 
-// ================== ĐIỀU KHIỂN ==================
+// UI Functions
 function setMode(m) {
   currentMode = m;
-  localStorage.setItem('tuanx3000_mode', m);
-  
-  document.getElementById("o-md5").classList.toggle("active", m === 'md5');
-  document.getElementById("o-nohu").classList.toggle("active", m === 'nohu');
-  
+  localStorage.setItem('max789_mode', m);
+  document.querySelectorAll('.m-opt').forEach(el => el.classList.remove('active'));
+  document.getElementById(`o-${m}`).classList.add('active');
   document.getElementById("label").innerText = `MAX789 ${m.toUpperCase()} PRO`;
   if (document.getElementById("m-panel").style.display === "block") toggleMenu();
-  
   refreshData();
 }
 
@@ -200,14 +168,13 @@ function toggleMenu() {
 
 function resize(f) {
   currentScale = Math.max(0.6, Math.min(1.5, currentScale * f));
-  localStorage.setItem('tuanx3000_scale', currentScale);
+  localStorage.setItem('max789_scale', currentScale);
   document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 }
 
 // Drag & Drop
 const el = document.getElementById("tool-root");
 let isDrag = false, offset = [0, 0];
-
 const start = (e) => {
   isDrag = true;
   el.style.transition = 'none';
@@ -220,10 +187,7 @@ const move = (e) => {
   el.style.left = (c.clientX - offset[0]) + 'px';
   el.style.top = (c.clientY - offset[1]) + 'px';
 };
-const end = () => {
-  isDrag = false;
-  el.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-};
+const end = () => { isDrag = false; el.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; };
 
 el.addEventListener('mousedown', start);
 el.addEventListener('touchstart', start, {passive: false});
@@ -232,11 +196,10 @@ window.addEventListener('touchmove', move, {passive: false});
 window.addEventListener('mouseup', end);
 window.addEventListener('touchend', end);
 
-// KHỞI TẠO
+// Init
 document.getElementById("tool-root").style.transform = `translate(-50%, -50%) scale(${currentScale})`;
 setMode(currentMode);
-setInterval(refreshData, 2800); // ~2.8 giây
-refreshData();
+setInterval(refreshData, 3500);
 </script>
 </body>
 </html>

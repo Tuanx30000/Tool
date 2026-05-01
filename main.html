@@ -27,7 +27,7 @@
             justify-content: center;
         }
 
-        /* Hiệu ứng nền mờ ảo */
+        /* Hiệu ứng nền mờ ảo tổng thể */
         .bg-glow {
             position: fixed;
             top: -10%; left: -10%; width: 50%; height: 50%;
@@ -95,32 +95,57 @@
             display: block; animation: pulse 2s infinite;
         }
 
-        /* Game Grid */
+        /* PHẦN NÂNG CẤP: GAME SCREEN BACKGROUND */
+        #game-screen {
+            position: relative;
+            flex: 1;
+            overflow-y: auto;
+            border-radius: 25px;
+            background: radial-gradient(circle at center, rgba(0, 255, 65, 0.05) 0%, transparent 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            /* Tạo hiệu ứng lưới điện tử ẩn hiện */
+            background-image: 
+                linear-gradient(rgba(0, 255, 65, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
         .game-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr 1fr; 
             gap: 12px; 
-            overflow-y: auto;
             padding-bottom: 100px;
         }
+
         .game-card { 
-            background: var(--card-bg); 
+            background: rgba(20, 20, 20, 0.6); 
             border: 1px solid var(--glass-border); 
             border-radius: 20px; 
             padding: 10px; 
             text-align: center; 
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            backdrop-filter: blur(10px);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .game-card:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
+        .game-card:active { transform: scale(0.9); border-color: var(--primary); }
         
         .game-thumb { 
             aspect-ratio: 1/1;
             background: #000; border-radius: 14px; 
             margin-bottom: 10px; overflow: hidden; 
             border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
         }
+        /* Hiệu ứng bóng đổ Neon cho ảnh game */
+        .game-thumb::after {
+            content: ''; position: absolute; inset: 0;
+            box-shadow: inset 0 0 15px rgba(0, 255, 65, 0.2);
+            pointer-events: none;
+        }
+
         .game-thumb img { width: 100%; height: 100%; object-fit: cover; }
-        .game-card span { font-weight: 700; font-size: 11px; color: #fff; opacity: 0.9; }
+        .game-card span { font-weight: 700; font-size: 11px; color: #fff; opacity: 0.9; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
 
         /* Bottom Menu */
         .bottom-bar { 
@@ -130,6 +155,7 @@
             backdrop-filter: blur(10px);
             display: flex; padding: 8px; border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 100;
         }
         .menu-btn { 
             flex: 1; padding: 12px; border: none; background: transparent;
@@ -203,6 +229,7 @@
             📢 THÔNG BÁO: MUA KEY IB TUANX3000
         </a>
 
+        <!-- VÙNG CHỨA GAME ĐÃ ĐƯỢC NÂNG CẤP NỀN -->
         <div id="game-screen">
             <div class="game-grid">
                 <div class="game-card" onclick="openKey('SUNWIN', 'toolsunwin.html')">
@@ -228,6 +255,10 @@
                 <div class="game-card" onclick="openKey('68GB', 'tool68gb.html')">
                     <div class="game-thumb"><img src="https://i.ibb.co/WNCHNFrK/IMG-6810.png"></div>
                     <span>68GB</span>
+                </div>
+                <div class="game-card" onclick="openKey('BACCARAT', 'toolbcr.html')">
+                    <div class="game-thumb"><img src="https://i.ibb.co/whw057nb/IMG-6846.png"></div>
+                    <span>BACCARAT</span>
                 </div>
             </div>
         </div>
