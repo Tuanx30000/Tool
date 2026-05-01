@@ -2,284 +2,263 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>V1 PRO • MULTI TOOL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sunwin</title>
 <style>
-/* Cấu trúc nền */
-html, body {
-  margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
-  background: #000; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+:root{
+  --accent:#00ccff;
+  --bg:#000814;
+  --bg2:#001a26;
+  --text:#eaf6ff;
+  --panel:#0b2230cc;
 }
-
-#game-frame {
-  position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1;
+*{box-sizing:border-box}
+body {
+  margin: 0;
+  background: linear-gradient(180deg, var(--bg2), var(--bg));
+  overflow: hidden;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
 }
-
-/* MENU CỐ ĐỊNH GÓC TRÊN PHẢI */
-#fixed-menu-btn {
-  position: fixed; top: 15px; right: 15px; width: 48px; height: 48px;
-  background: rgba(0, 234, 255, 0.18); border: 1.5px solid #00eaff;
-  border-radius: 14px; display: flex; justify-content: center; align-items: center;
-  z-index: 1000005; cursor: pointer; color: #00eaff; font-size: 26px; font-weight: bold;
-  backdrop-filter: blur(12px); box-shadow: 0 4px 15px rgba(0, 234, 255, 0.2);
+iframe {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  border: none;
 }
-
-#menu-panel {
-  position: fixed; top: 72px; right: 15px; width: 175px;
-  background: rgba(10, 10, 15, 0.96); border: 1.5px solid #00eaff;
-  border-radius: 16px; display: none; z-index: 1000006; overflow: hidden;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.85);
+.pill {
+  position: fixed;
+  top: 10px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  z-index: 10000;
+  background: var(--accent);
+  color: #001018;
+  box-shadow: 0 6px 18px rgba(0,204,255,.25);
+  user-select: none;
 }
-
-.menu-group { border-bottom: 1px solid #222; padding: 6px 0; }
-.menu-label { font-size: 10.5px; color: #666; padding: 6px 14px; text-transform: uppercase; letter-spacing: 0.5px; }
-.menu-item {
-  color: #fff; padding: 13px 16px; font-size: 13.5px; font-weight: 700;
-  cursor: pointer; transition: all 0.25s;
+#logout { left: 10px; cursor: pointer; }
+#balance { right: 10px; }
+#botWrap{
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  touch-action: none;
+  cursor: grab;
 }
-.menu-item:hover { background: rgba(0, 234, 255, 0.15); }
-.menu-item:active { background: #00eaff; color: #000; }
-.menu-item.active { color: #ffd700; border-left: 4px solid #ffd700; }
-
-/* TOOL V1 PRO */
-#tool {
-  position: fixed; top: 25%; left: 50%; transform: translateX(-50%) scale(1);
-  width: 285px; height: 130px; border-radius: 9999px;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 18px; z-index: 1000000; touch-action: none; user-select: none;
-  background: rgba(18, 18, 22, 0.85); backdrop-filter: blur(28px);
-  border: 1.5px solid rgba(0, 255, 255, 0.45);
-  box-shadow: 0 18px 50px rgba(0,0,0,0.92);
-  transition: transform 0.3s ease;
+#botWrap:active{ cursor: grabbing; }
+#robot {
+  width: 120px;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
 }
-
-.led { 
-  width: 46px; height: 46px; border-radius: 50%; 
-  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+#botPanel{
+  min-width: 260px;
+  max-width: min(70vw, 420px);
+  background: var(--panel);
+  backdrop-filter: blur(6px);
+  border: 1px solid #0ea5b7;
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--text);
+  box-shadow: 0 8px 24px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.04);
 }
-.tai { background: #002200; border: 2px solid rgba(0, 255, 136, 0.25); }
-.xiu { background: #330000; border: 2px solid rgba(255, 51, 85, 0.25); }
-.on.tai { background: #00ff88; box-shadow: 0 0 30px #00ff88, inset 0 0 20px #fff; }
-.on.xiu { background: #ff3355; box-shadow: 0 0 30px #ff3355, inset 0 0 20px #fff; }
-
-.center { flex: 1; text-align: center; pointer-events: none; }
-#tool-name { font-size: 11px; color: #ffd700; font-weight: 900; margin-bottom: 3px; letter-spacing: 1px; }
-#phien { font-size: 13px; font-weight: 900; color: #00eaff; letter-spacing: 1.2px; }
-#duDoan { font-size: 14.5px; font-weight: 800; color: #fff; margin: 6px 0 4px; min-height: 22px; }
-
-.core-container { display: flex; gap: 6px; margin-top: 8px; justify-content: center; }
-.core { 
-  width: 18px; height: 18px; border-radius: 50%; 
-  background: #333; transition: all 0.5s ease; 
+#botHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:6px;
 }
-.core.active { 
-  background: #ffd700; 
-  box-shadow: 0 0 15px #ffd700; 
-  transform: scale(1.15); 
+.badge{
+  background: #012734;
+  border: 1px solid #0ea5b7;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .3px;
 }
-
-#recommend { 
-  font-size: 11.5px; font-weight: 900; margin-top: 6px; min-height: 18px; 
-  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+#statusDot{
+  width:10px;height:10px;border-radius:50%;
+  background:#aaa;
+  box-shadow:0 0 0 3px #ffffff14;
+  margin-left:6px;
+}
+#summaryLine{
+  font-weight:800;
+  font-size:16px;
+  margin:6px 0 8px;
+}
+#botBody p{
+  margin:4px 0;
+  font-size:14px;
+}
+#botBody .kv{ opacity:.9 }
+#botBody .val{ font-weight:800; }
+#progressBarWrap{
+  position:relative;
+  height:6px;
+  background:#0a2a38;
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:8px;
+}
+#progressBar{
+  position:absolute;inset:0 100% 0 0;
+  background: linear-gradient(90deg, #22d3ee, #0ea5b7);
+  transition: inset .2s linear;
+}
+@media (max-width:480px){
+  #robot{ width: 96px; }
+  #botPanel{ min-width: 220px; }
 }
 </style>
 </head>
 <body>
 
-<iframe id="game-frame" src="https://web.sunwin.ec"></iframe>
-<!-- NÚT QUAY LẠI INDEX - GÓC TRÁI TRÊN -->
-<div id="back-btn" onclick="goBackToIndex()" 
-     style="position:fixed; top:15px; left:15px; width:48px; height:48px;
-            background:rgba(0,234,255,0.18); border:1.5px solid #00eaff;
-            border-radius:14px; display:flex; justify-content:center; align-items:center;
-            z-index:1000005; cursor:pointer; color:#00eaff; font-size:22px; 
-            backdrop-filter:blur(12px); box-shadow:0 4px 15px rgba(0,234,255,0.25);">
-    ←
-</div>
+<div id="logout" class="pill" onclick="window.location.href='main.html'">Đăng xuất</div>
 
-<div id="fixed-menu-btn" onclick="toggleMenu()">☰</div>
-
-<div id="menu-panel">
-  <div class="menu-group">
-    <div class="menu-label">Loại Tool</div>
-    <div id="m-tx" class="menu-item active" onclick="setToolType('TX')">TOOL TX THƯỜNG</div>
-    <div id="m-md5" class="menu-item" onclick="setToolType('MD5')">TOOL SICBO MD5</div>
-  </div>
-  <div class="menu-group">
-    <div class="menu-label">Cài đặt</div>
-    <div class="menu-item" onclick="resizeTool(1.08)">PHÓNG TO (+)</div>
-    <div class="menu-item" onclick="resizeTool(0.92)">THU NHỎ (-)</div>
-    <div class="menu-item" onclick="toggleTool()">ẨN / HIỆN TOOL</div>
-    <div class="menu-item" onclick="location.reload()">LÀM MỚI (F5)</div>
+<div id="botWrap">
+  <div id="hint">Kéo giữ để di chuyển</div>
+  <img id="robot" src="https://i.postimg.cc/63bdy9D9/robotics-1.gif" alt="Robot" draggable="false" />
+  <div id="botPanel" aria-live="polite">
+    <div id="botHeader">
+      <div class="badge">BOT DỰ ĐOÁN</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:12px">Trạng thái</span>
+        <div id="statusDot" title="Trạng thái kết nối"></div>
+      </div>
+    </div>
+    <div id="summaryLine">Đang tải…</div>
+    <div id="botBody">
+      <p class="kv">Độ tin cậy: <span class="val" id="do_tin_cay">…</span></p>
+      <p class="kv">Dự đoán: <span class="val" id="duDoan">…</span></p>
+      <p class="kv">Phiên: <span class="val" id="phien">…</span></p>
+      <div id="progressBarWrap">
+        <div id="progressBar"></div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div id="tool">
-  <div id="ledT" class="led tai"></div>
-  
-  <div class="center">
-    <div id="tool-name">V1 PRO • TX THƯỜNG</div>
-    <div id="phien">PHIÊN #---</div>
-    <div id="duDoan">ĐANG CHỜ DỮ LIỆU...</div>
-    <div class="core-container" id="cores"></div>
-    <div id="recommend">⏳ ĐANG PHÂN TÍCH...</div>
-  </div>
-  
-  <div id="ledX" class="led xiu"></div>
-</div>
+<iframe src="https://web.sunwin.mw/?affId=Sunwin"></iframe>
 
 <script>
-const API_URL = "https://sunwinapihdx-production.up.railway.app/api/predict";
-const tool = document.getElementById("tool");
-const menuPanel = document.getElementById("menu-panel");
-const coresContainer = document.getElementById("cores");
+(() => {
+  const API_URL = "https://sunlaymaynkx.hacksieucap.pro/ttsunver2";
+  const POLL_MS = 8000;
+  const PROGRESS_FPS = 120;
 
-let scale = 1;
-let isDragging = false;
-let offset = { x: 0, y: 0 };
-let currentTool = 'TX';
+  const botWrap = document.getElementById('botWrap');
+  const statusDot = document.getElementById('statusDot');
+  const duDoanEl = document.getElementById('duDoan');
+  const doTinCayEl = document.getElementById('do_tin_cay');  // Đổi id để rõ ràng hơn
+  const phienEl = document.getElementById('phien');
+  const progressBar = document.getElementById('progressBar');
+  const hint = document.getElementById('hint');
+  const summaryLine = document.getElementById('summaryLine');
 
-// Toggle menu
-function toggleMenu() {
-  menuPanel.style.display = menuPanel.style.display === "block" ? "none" : "block";
-}
-
-// Chuyển loại tool
-function setToolType(type) {
-  currentTool = type;
-  document.getElementById('tool-name').innerText = `V1 PRO • ${type === 'TX' ? 'TX THƯỜNG' : 'SICBO MD5'}`;
-  document.getElementById('m-tx').classList.toggle('active', type === 'TX');
-  document.getElementById('m-md5').classList.toggle('active', type === 'MD5');
-  menuPanel.style.display = "none";
-  fetchData();
-}
-
-// Resize tool
-function resizeTool(factor) {
-  scale = Math.max(0.65, Math.min(1.45, scale * factor));
-  tool.style.transform = `translateX(-50%) scale(${scale})`;
-}
-
-// Ẩn/Hiện tool
-function toggleTool() {
-  tool.style.display = (tool.style.display === "none") ? "flex" : "none";
-  menuPanel.style.display = "none";
-}
-
-// Đóng menu khi click ngoài
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('#fixed-menu-btn') && !e.target.closest('#menu-panel')) {
-    menuPanel.style.display = "none";
+  const POS_KEY = 'sunwin_bot_pos_v2';
+  function clamp(val, min, max){ return Math.min(Math.max(val, min), max); }
+  function restorePos(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(POS_KEY) || 'null');
+      if(saved){
+        botWrap.style.left = clamp(saved.x, 0, window.innerWidth - botWrap.offsetWidth) + 'px';
+        botWrap.style.top  = clamp(saved.y, 0, window.innerHeight - botWrap.offsetHeight) + 'px';
+      }
+    }catch(e){}
   }
-});
-
-// Kéo thả trên mobile
-tool.addEventListener('touchstart', (e) => {
-  isDragging = true;
-  const rect = tool.getBoundingClientRect();
-  offset.x = e.touches[0].clientX - rect.left;
-  offset.y = e.touches[0].clientY - rect.top;
-}, { passive: true });
-
-window.addEventListener('touchmove', (e) => {
-  if (!isDragging) return;
-  let x = e.touches[0].clientX - offset.x;
-  let y = e.touches[0].clientY - offset.y;
-  tool.style.left = `${x}px`;
-  tool.style.top = `${y}px`;
-  tool.style.transform = `scale(${scale})`;
-}, { passive: false });
-
-window.addEventListener('touchend', () => { isDragging = false; });
-
-// Tạo 5 core
-function createCores() {
-  coresContainer.innerHTML = '';
-  for (let i = 0; i < 5; i++) {
-    const core = document.createElement('div');
-    core.className = 'core';
-    coresContainer.appendChild(core);
-  }
-}
-createCores();
-
-// Cập nhật giao diện
-function updateDisplay(phien, duDoan, doTinCay = 0) {
-  document.getElementById("phien").innerText = `PHIÊN #${phien || '---'}`;
-
-  const duDoanEl = document.getElementById("duDoan");
-  const ledT = document.getElementById("ledT");
-  const ledX = document.getElementById("ledX");
-  const rec = document.getElementById("recommend");
-
-  duDoanEl.innerText = (duDoan || "ĐANG CHỜ...").toUpperCase();
-
-  // Reset LED
-  ledT.classList.remove("on");
-  ledX.classList.remove("on");
-  duDoanEl.style.color = "#fff";
-
-  const pred = String(duDoan || "").toLowerCase().trim();
-  if (pred.includes("tài") || pred.includes("tai")) {
-    ledT.classList.add("on");
-    duDoanEl.style.color = "#00ff88";
-  } else if (pred.includes("xỉu") || pred.includes("xiu")) {
-    ledX.classList.add("on");
-    duDoanEl.style.color = "#ff3355";
+  function savePos(){
+    localStorage.setItem(POS_KEY, JSON.stringify({x:botWrap.offsetLeft, y:botWrap.offsetTop}));
   }
 
-  // Độ tin cậy → số core sáng
-  let level = Math.min(Math.max(Math.floor((parseFloat(doTinCay) || 0) / 20), 1), 5);
-  const cores = coresContainer.querySelectorAll('.core');
-  cores.forEach((c, i) => c.classList.toggle('active', i < level));
-
-  // Khuyến nghị
-  if (level >= 4) {
-    rec.style.color = "#00ff88";
-    rec.innerText = "✅ SIÊU MẠNH - NÊN VÀO";
-  } else if (level >= 3) {
-    rec.style.color = "#ffd700";
-    rec.innerText = "⚠️ VÀO ĐỀU";
-  } else {
-    rec.style.color = "#888";
-    rec.innerText = "⏳ CHỜ NHỊP TỐT HƠN";
+  let dragging = false, startX = 0, startY = 0, startLeft = 0, startTop = 0;
+  function onPointerDown(e){
+    dragging = true;
+    hint.style.display = 'none';
+    botWrap.setPointerCapture(e.pointerId);
+    startX = e.clientX; startY = e.clientY;
+    startLeft = botWrap.offsetLeft; startTop = botWrap.offsetTop;
   }
-}
-// ================== NÚT QUAY LẠI INDEX ==================
-function goBackToIndex() {
-    if (confirm("Bạn có muốn quay lại?")) {
-        window.location.href = "main.html";
+  function onPointerMove(e){
+    if(!dragging) return;
+    botWrap.style.left = clamp(startLeft + (e.clientX - startX), 0, window.innerWidth - botWrap.offsetWidth) + 'px';
+    botWrap.style.top  = clamp(startTop + (e.clientY - startY), 0, window.innerHeight - botWrap.offsetHeight) + 'px';
+  }
+  function onPointerUp(e){
+    if(!dragging) return;
+    dragging = false;
+    botWrap.releasePointerCapture(e.pointerId);
+    savePos();
+  }
+  botWrap.addEventListener('pointerdown', onPointerDown);
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('resize', restorePos);
+
+  function setOnline(on){
+    statusDot.style.background = on ? '#22c55e' : '#f97316';
+    statusDot.style.boxShadow = on ? '0 0 0 6px #16a34a22' : '0 0 0 6px #ff7d1a22';
+  }
+
+  async function pull(){
+    try{
+      const resp = await fetch(API_URL, {cache:'no-store'});
+      if(!resp.ok) throw new Error('HTTP '+resp.status);
+      const j = await resp.json();
+
+      const phien  = Number(j.phien) + 1;
+      const du     = j.du_doan_van_sau ?? '—';
+      const tin    = j.do_tin_cay ?? '—';  // Sử dụng do_tin_cay từ JSON
+
+      duDoanEl.textContent = du;
+      doTinCayEl.textContent = tin;
+      phienEl.textContent = phien;
+
+      // màu sắc trực quan
+      const low = du.toLowerCase();
+      if(low.includes('tài') || low.includes('tai')){
+        duDoanEl.style.color = '#22d3ee';
+      } else if(low.includes('xỉu') || low.includes('xiu')){
+        duDoanEl.style.color = '#fca5a5';
+      } else {
+        duDoanEl.style.color = '#eaf6ff';
+      }
+
+      // summary line chỉ còn độ tin cậy + dự đoán + phiên
+      summaryLine.textContent = `${tin} • ${du} • Phiên: ${phien}`;
+      setOnline(true);
+    }catch(err){
+      setOnline(false);
     }
-}
-
-// Gọi API
-async function fetchData() {
-  try {
-    const response = await fetch(API_URL, { 
-      cache: "no-store",
-      headers: { "Cache-Control": "no-cache" }
-    });
-
-    if (!response.ok) throw new Error("Server error");
-
-    const data = await response.json();
-
-    const phien = data.phien_hien_tai || data.Phien || data.session || "---";
-    const duDoan = data.Du_doan || data.du_doan || data.predict || "";
-    const doTinCay = data.Do_tin_cay || data.confidence || data.do_tin_cay || 50;
-
-    updateDisplay(phien, duDoan, doTinCay);
-  } catch (e) {
-    console.error(e);
-    document.getElementById("duDoan").innerText = "LỖI KẾT NỐI API";
-    document.getElementById("duDoan").style.color = "#ffaa00";
-    document.getElementById("recommend").innerText = "Kiểm tra mạng hoặc API";
   }
-}
 
-// Chạy định kỳ
-setInterval(fetchData, 2800);
-fetchData(); // Lần đầu
+  let progress = 0;
+  function loopProgress(){
+    progress += (1/(POLL_MS/ (1000/PROGRESS_FPS)));
+    if(progress >= 1){
+      progress = 0;
+      pull();
+    }
+    progressBar.style.inset = `0 ${(1 - progress) * 100}% 0 0`;
+    requestAnimationFrame(loopProgress);
+  }
+
+  restorePos();
+  pull();
+  setInterval(pull, POLL_MS);
+  requestAnimationFrame(loopProgress);
+  setTimeout(()=> hint.style.display='none', 4000);
+})();
 </script>
 </body>
 </html>

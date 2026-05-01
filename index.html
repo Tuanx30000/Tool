@@ -3,99 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TOOL GAME V1 - TUANX3000</title>
+    <title>PREMIUM TOOL - TUANX3000</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #050505; color: #00ff41; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; overflow: hidden; }
-        * { box-sizing: border-box; user-select: none; }
-        
-        .container { position: relative; z-index: 10; max-width: 450px; margin: 0 auto; padding: 20px; height: 100vh; display: flex; flex-direction: column; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); }
-        
-        .header { text-align: center; margin-bottom: 15px; }
-        .google-badge { background: #fff; color: #444; font-weight: bold; font-size: 10px; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
-        h1 { margin: 0; color: #00ff41; text-shadow: 0 0 15px rgba(0, 255, 65, 0.5); font-size: 28px; text-transform: uppercase; }
-        
-        .notif-bar { background: rgba(255, 0, 170, 0.1); border: 1px solid #ff00aa; color: #ff00aa; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; font-weight: bold; text-align: center; animation: pulse 2s infinite; display: block; text-decoration: none; }
+        :root {
+            --primary: #00ff41;
+            --accent: #ff00aa;
+            --dark: #080808;
+            --glass: rgba(20, 20, 20, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+        }
 
-        .auth-tabs { display: flex; border-bottom: 1px solid #333; margin-bottom: 20px; }
-        .tab-btn { flex: 1; padding: 12px; background: transparent; border: none; color: #666; font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; transition: 0.3s; }
-        .tab-btn.active { color: #00ff41; border-bottom: 2px solid #00ff41; }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         
-        .form-group { display: none; animation: slideUp 0.4s ease forwards; }
+        body { 
+            background: var(--dark); 
+            color: #fff; 
+            font-family: 'Lexend', sans-serif; 
+            margin: 0; 
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Nền hiệu ứng hạt (Starfield) */
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+
+        .container { 
+            width: 90%;
+            max-width: 400px; 
+            padding: 35px 25px; 
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            animation: containerEntry 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .header { text-align: center; margin-bottom: 30px; }
+        .badge { 
+            background: linear-gradient(90deg, #008000, var(--primary));
+            color: #000; 
+            font-weight: 800; 
+            font-size: 11px; 
+            padding: 4px 12px; 
+            border-radius: 50px; 
+            display: inline-block; 
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        h1 { 
+            margin: 0; 
+            font-size: 28px; 
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .notif-bar { 
+            background: rgba(255, 0, 170, 0.1); 
+            border-left: 4px solid var(--accent); 
+            color: var(--accent); 
+            padding: 14px; 
+            border-radius: 8px; 
+            margin-bottom: 25px; 
+            font-size: 13px; 
+            font-weight: 600; 
+            text-align: center; 
+            text-decoration: none;
+            display: block;
+            transition: 0.3s;
+        }
+        .notif-bar:hover { background: rgba(255, 0, 170, 0.2); transform: scale(1.02); }
+
+        .auth-tabs { 
+            display: flex; 
+            background: rgba(255,255,255,0.05);
+            border-radius: 14px;
+            padding: 6px;
+            margin-bottom: 25px; 
+        }
+        .tab-btn { 
+            flex: 1; 
+            padding: 12px; 
+            background: transparent; 
+            border: none; 
+            color: #777; 
+            font-weight: 600; 
+            cursor: pointer; 
+            border-radius: 10px;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .tab-btn.active { 
+            background: #fff;
+            color: #000;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+        }
+        
+        .form-group { display: none; animation: slideIn 0.5s ease forwards; }
         .form-group.active { display: block; }
         
-        input { width: 100%; padding: 14px; margin: 8px 0; background: #111; border: 1px solid #333; color: #fff; border-radius: 8px; outline: none; text-align: center; font-size: 14px; transition: 0.3s; }
-        input:focus { border-color: #00ff41; box-shadow: 0 0 10px rgba(0, 255, 65, 0.2); }
+        .input-box { position: relative; margin-bottom: 15px; }
+        input { 
+            width: 100%; 
+            padding: 16px; 
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--border); 
+            color: #fff; 
+            border-radius: 14px; 
+            outline: none; 
+            font-size: 15px; 
+            transition: 0.3s;
+            text-align: center;
+        }
+        input:focus { 
+            border-color: var(--primary); 
+            background: rgba(255,255,255,0.07);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.15); 
+        }
         
-        .btn-submit { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; transition: 0.2s; }
-        .btn-login { background: linear-gradient(90deg, #008000, #00ff41); color: #000; }
-        .btn-reg { background: linear-gradient(90deg, #333, #555); color: #fff; }
+        .btn-submit { 
+            width: 100%; 
+            padding: 18px; 
+            margin-top: 10px; 
+            border: none; 
+            border-radius: 14px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-size: 16px; 
+            text-transform: uppercase; 
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-login { background: var(--primary); color: #000; }
+        .btn-login:hover { box-shadow: 0 0 30px rgba(0, 255, 65, 0.4); }
+        .btn-reg { background: transparent; color: #fff; border: 1px solid #333; }
+        .btn-reg:hover { background: rgba(255,255,255,0.05); }
 
-        #msg-status { margin-top: 15px; font-size: 13px; text-align: center; min-height: 20px; font-weight: bold; }
-        .hidden { display: none !important; }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255,0,170,0.4); } 70% { box-shadow: 0 0 0 12px rgba(255,0,170,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,170,0); } }
+        #msg-status { 
+            margin-top: 20px; 
+            font-size: 14px; 
+            text-align: center; 
+            min-height: 20px;
+            font-weight: 500;
+        }
+
+        .tele-float {
+            position: fixed; bottom: 25px; right: 25px;
+            background: #24A1DE; color: white;
+            width: 55px; height: 55px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; box-shadow: 0 10px 25px rgba(36, 161, 222, 0.4);
+            text-decoration: none; transition: 0.3s; z-index: 100;
+        }
+        .tele-float:hover { transform: translateY(-5px) rotate(10deg); }
+
+        @keyframes containerEntry { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        .shake { animation: shake 0.3s ease-in-out 2; }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="container" id="main-container">
         <div class="header">
-            <span class="google-badge">Tuanx3000</span>
-            <h1>TOOL GAME V1</h1>
+            <span class="badge">System v1.0.4</span>
+            <h1>TUANX3000</h1>
         </div>
 
         <a class="notif-bar" href="https://t.me/tuanx3000" target="_blank">
-            📢 MUA KEY VIP LIÊN HỆ: @TUANX3000
+            TELEGRAM: @TUANX3000 (KEY VIP)
         </a>
 
-<a href="https://t.me/keocaumoigame" class="tele-float" target="_blank">✈️ GROUP</a>
-
-        <div id="auth-screen">
-            <div class="auth-tabs">
-                <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">ĐĂNG NHẬP</button>
-                <button class="tab-btn" id="tab-reg" onclick="switchTab('register')">ĐĂNG KÝ</button>
-            </div>
-            
-            <div id="login-form" class="form-group active">
+        <div class="auth-tabs">
+            <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">LOGIN</button>
+            <button class="tab-btn" id="tab-reg" onclick="switchTab('register')">REGISTER</button>
+        </div>
+        
+        <div id="login-form" class="form-group active">
+            <div class="input-box">
                 <input type="text" id="login-user" placeholder="Tên tài khoản">
+            </div>
+            <div class="input-box">
                 <input type="password" id="login-pass" placeholder="Mật khẩu">
-                <button class="btn-submit btn-login" onclick="handleAuth('login')">VÀO HỆ THỐNG</button>
             </div>
-            
-            <div id="reg-form" class="form-group">
-                <input type="text" id="reg-user" placeholder="Tên tài khoản mới">
-                <input type="password" id="reg-pass" placeholder="Mật khẩu mới">
-                <input type="text" id="reg-sdt" placeholder="Số điện thoại">
-                <button class="btn-submit btn-reg" onclick="handleAuth('register')">ĐĂNG KÝ NGAY</button>
-            </div>
+            <button class="btn-submit btn-login" id="btn-login-submit" onclick="handleAuth('login')">VÀO HỆ THỐNG</button>
+        </div>
+        
+        <div id="reg-form" class="form-group">
+            <input type="text" id="reg-user" placeholder="Tạo tài khoản">
+            <input type="password" id="reg-pass" placeholder="Tạo mật khẩu">
+            <input type="text" id="reg-sdt" placeholder="Số điện thoại">
+            <button class="btn-submit btn-reg" id="btn-reg-submit" onclick="handleAuth('register')">ĐĂNG KÝ NGAY</button>
         </div>
 
         <div id="msg-status"></div>
     </div>
 
+    <a href="https://t.me/keocaumoigame" class="tele-float" title="Tham gia Group">✈️</a>
+
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcWdVTthI3G7AhFHJLyUX_WhMpOOyxCtzv4KvmQ1GUkzedlpGEf0qQRTQgzt1lygsm2w/exec";
 
-        // ================== KIỂM TRA ĐÃ ĐĂNG NHẬP CHƯA ==================
-        function checkAlreadyLoggedIn() {
-            const savedUser = localStorage.getItem('tuanx3000_user');
-            if (savedUser) {
-                window.location.href = `main.html?u=${encodeURIComponent(savedUser)}`;
+        // --- Background Animation (Canvas) ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<100; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    speed: Math.random() * 0.5 + 0.2
+                });
             }
         }
 
+        function drawStars() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = "#fff";
+            stars.forEach(s => {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+                ctx.fill();
+                s.y += s.speed;
+                if(s.y > canvas.height) s.y = 0;
+            });
+            requestAnimationFrame(drawStars);
+        }
+
+        // --- Logic Xử Lý ---
         function switchTab(tab) {
             document.getElementById('login-form').classList.toggle('active', tab === 'login');
             document.getElementById('reg-form').classList.toggle('active', tab === 'register');
             document.getElementById('tab-login').classList.toggle('active', tab === 'login');
             document.getElementById('tab-reg').classList.toggle('active', tab === 'register');
+            document.getElementById('msg-status').innerText = "";
+        }
+
+        function setStatus(text, color, shake = false) {
+            const msg = document.getElementById('msg-status');
+            msg.style.color = color;
+            msg.innerText = text;
+            if(shake) {
+                const container = document.getElementById('main-container');
+                container.classList.add('shake');
+                setTimeout(() => container.classList.remove('shake'), 400);
+            }
         }
 
         async function handleAuth(type) {
-            const msg = document.getElementById('msg-status');
-            let payload = { action: type };
+            const btn = document.getElementById(`btn-${type}-submit`);
+            const originalText = btn.innerText;
             
+            let payload = { action: type };
             if (type === 'login') {
                 payload.username = document.getElementById('login-user').value.trim();
                 payload.password = document.getElementById('login-pass').value.trim();
@@ -106,13 +284,14 @@
             }
 
             if (!payload.username || !payload.password) {
-                msg.style.color = "#ff4d4d"; 
-                msg.innerText = "❌ Vui lòng điền đầy đủ thông tin!";
+                setStatus("❌ Vui lòng nhập đủ thông tin!", "#ff4d4d", true);
                 return;
             }
 
-            msg.style.color = "#ffbc00"; 
-            msg.innerText = "⏳ Đang xử lý...";
+            // Lock UI
+            btn.disabled = true;
+            btn.innerText = "ĐANG XỬ LÝ...";
+            setStatus("⏳ Đang kết nối server bảo mật...", "#ffbc00");
 
             try {
                 const res = await fetch(SCRIPT_URL, { 
@@ -123,28 +302,32 @@
 
                 if (data.success) {
                     if (type === 'login') {
-                        // LƯU THÔNG TIN ĐĂNG NHẬP
                         localStorage.setItem('tuanx3000_user', payload.username);
-                        
-                        // Chuyển sang trang chủ
-                        window.location.href = `main.html?u=${encodeURIComponent(payload.username)}`;
+                        setStatus("✅ Xác thực thành công! Đang vào...", "#00ff41");
+                        setTimeout(() => window.location.href = `main.html?u=${encodeURIComponent(payload.username)}`, 800);
                     } else {
-                        msg.style.color = "#00ff41"; 
-                        msg.innerText = "✅ Đăng ký thành công! Hãy đăng nhập.";
-                        switchTab('login');
+                        setStatus("✅ Đăng ký thành công! Mời bạn đăng nhập.", "#00ff41");
+                        setTimeout(() => switchTab('login'), 1500);
                     }
                 } else {
-                    msg.style.color = "#ff4d4d"; 
-                    msg.innerText = "⚠️ " + (data.message || "Lỗi!");
+                    setStatus("⚠️ " + (data.message || "Lỗi truy cập!"), "#ff4d4d", true);
                 }
             } catch (e) {
-                msg.style.color = "#ff4d4d"; 
-                msg.innerText = "🚫 Lỗi kết nối server!";
+                setStatus("🚫 Lỗi kết nối (Server Down)!", "#ff4d4d", true);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
             }
         }
 
-        // KHỞI CHẠY - Kiểm tra ngay khi mở trang
-        window.onload = checkAlreadyLoggedIn;
+        window.onload = () => {
+            initCanvas();
+            drawStars();
+            // Kiểm tra login cũ
+            const savedUser = localStorage.getItem('tuanx3000_user');
+            if (savedUser) window.location.href = `main.html?u=${encodeURIComponent(savedUser)}`;
+        };
+        window.onresize = initCanvas;
     </script>
 </body>
 </html>
