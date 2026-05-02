@@ -16,14 +16,12 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
         }
         
-        /* IFRAME GAME */
         #game-frame { 
             width: 100%; height: 100%; border: none; 
             position: absolute; top: 0; left: 0; z-index: 1; 
             background: #050505;
         }
 
-        /* NÚT QUAY LẠI GÓC TRÁI */
         #back-home-btn {
             position: fixed; top: 15px; left: 15px; width: 44px; height: 44px;
             background: rgba(10, 10, 25, 0.8); border: 1px solid var(--neon);
@@ -34,7 +32,6 @@
         }
         #back-home-btn:active { transform: scale(0.9); background: var(--neon); color: #000; }
 
-        /* WIDGET TOOL */
         #tool-wrap {
             position: fixed; top: 100px; left: 15px; z-index: 999999;
             background: var(--bg); backdrop-filter: blur(20px);
@@ -119,7 +116,6 @@
 
 <iframe id="game-frame" src="about:blank"></iframe>
 
-<!-- NÚT QUAY LẠI TRANG CHỦ -->
 <div id="back-home-btn" onclick="goHome()">←</div>
 
 <div id="tool-wrap" class="list-mode">
@@ -128,7 +124,7 @@
     <div id="list-ui">
         <div class="header"><div class="status-dot"></div> Tuanx3000 BCR V1</div>
         <div class="input-box">
-            <input type="text" id="game-url" placeholder="Dán link game tại đây...">
+            <input type="text" id="game-url" placeholder="Dán link game mày chơi...">
             <button class="btn-load" onclick="loadGame()">MỞ</button>
         </div>
         <div id="scroll-box"></div>
@@ -143,7 +139,6 @@
 </div>
 
 <script>
-    // Hàm quay lại trang chủ (Thay index.html bằng file trang chủ của bạn)
     function goHome() {
         window.location.href = 'index.html';
     }
@@ -156,13 +151,58 @@
 
     let apiData = [], activeTable = null, isLocked = false;
 
+    // ==================== NÂNG CẤP PHẦN DÁN LINK ====================
     function loadGame() {
-        const url = document.getElementById('game-url').value.trim();
-        if (url && url.startsWith('http')) {
-            document.getElementById('game-frame').src = url;
+        let url = document.getElementById('game-url').value.trim();
+        
+        if (!url) {
+            alert("Vui lòng dán link game!");
+            return;
         }
+
+        // Xử lý nhiều dạng link phổ biến
+        url = url.trim();
+
+        // Nếu là link rút gọn (bit.ly, t.ly, shortlink...)
+        if (url.length < 30 && !url.includes("http")) {
+            alert("Link quá ngắn hoặc không hợp lệ!");
+            return;
+        }
+
+        // Thêm http nếu thiếu
+        if (!url.startsWith('http')) {
+            url = 'https://' + url;
+        }
+
+        // Sử dụng proxy cho một số trường hợp link bị chặn
+        const needsProxy = url.includes("ag.") || 
+                          url.includes("666") || 
+                          url.includes("fun") || 
+                          url.includes("livecasino") ||
+                          url.includes("play");
+
+        let finalUrl = url;
+
+        if (needsProxy) {
+            finalUrl = APP_CONFIG.PROXY + encodeURIComponent(url);
+        }
+
+        document.getElementById('game-frame').src = finalUrl;
+        
+        // Thông báo thành công
+        const input = document.getElementById('game-url');
+        input.style.borderColor = '#00ff88';
+        setTimeout(() => input.style.borderColor = '', 1500);
     }
 
+    // Cho phép nhấn Enter để mở game
+    document.getElementById('game-url').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            loadGame();
+        }
+    });
+
+    // ==================== PHẦN CODE CÒN LẠI GIỮ NGUYÊN ====================
     function analyzeNeural(item) {
         const raw = (item.ket_qua || "").toUpperCase();
         const clean = raw.replace(/T/g, "");
@@ -252,6 +292,7 @@
         btn.classList.toggle('locked', isLocked);
     }
 
+    // Drag tool
     const tool = document.getElementById('tool-wrap');
     let startX, startY;
     tool.addEventListener('touchstart', (e) => {
